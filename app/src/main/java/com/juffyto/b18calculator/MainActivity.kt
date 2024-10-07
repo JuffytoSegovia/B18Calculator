@@ -11,8 +11,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val bottomNavigation: BottomNavigationView = findViewById(R.id.bottomNavigation)
-        bottomNavigation.setOnItemSelectedListener { item ->
+        // Configurar la Toolbar
+        setSupportActionBar(findViewById(R.id.toolbar))
+        supportActionBar?.setDisplayShowTitleEnabled(true)
+
+        // Cargar el fragmento de inicio por defecto
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, HomeFragment())
+                .commit()
+        }
+
+        // Configurar el BottomNavigationView
+        val bottomNav: BottomNavigationView = findViewById(R.id.bottomNavigation)
+        bottomNav.setOnItemSelectedListener { item ->
             when(item.itemId) {
                 R.id.navigation_home -> {
                     loadFragment(HomeFragment())
@@ -33,14 +45,23 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
-
-        // Cargar el fragmento de inicio por defecto
-        loadFragment(HomeFragment())
     }
 
     private fun loadFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .commit()
+    }
+
+    fun navigateToPreselection() {
+        loadFragment(PreselectionFragment())
+    }
+
+    fun navigateToSelection() {
+        loadFragment(SelectionFragment())
+    }
+
+    fun navigateToCredits() {
+        loadFragment(CreditsFragment())
     }
 }

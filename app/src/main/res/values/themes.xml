@@ -14,5 +14,10 @@
         <item name="android:textColorSecondary">@color/text_color_secondary</item>
     </style>
 
+    <style name="ToolbarTitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
     <style name="Theme.B18Calculator" parent="Base.Theme.B18Calculator" />
 </resources>
