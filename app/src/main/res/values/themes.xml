@@ -2,8 +2,21 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.B18Calculator" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/blue_primary</item>
+        <item name="colorPrimaryVariant">@color/blue_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/blue_light</item>
+        <item name="colorSecondaryVariant">@color/blue_medium</item>
+        <item name="colorOnSecondary">@color/blue_dark</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:windowBackground">@color/white</item>
     </style>
 
     <style name="Theme.B18Calculator" parent="Base.Theme.B18Calculator" />
+
+    <!-- Splash Screen Theme -->
+    <style name="SplashTheme" parent="Theme.B18Calculator">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:statusBarColor">@color/blue_primary</item>
+    </style>
 </resources>
