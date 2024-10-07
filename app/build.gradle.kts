@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.juffyto.b18calculator"
-    compileSdk = 34
+    compileSdk = 34  // Mantener esto en 34 para poder usar las últimas APIs
 
     defaultConfig {
         applicationId = "com.juffyto.b18calculator"
-        minSdk = 34
-        targetSdk = 34
+        minSdk = 33  // Cambiado a 33 para Android 13 (Tiramisu)
+        targetSdk = 34  // Mantener en 34
         versionCode = 1
         versionName = "1.0"
 
@@ -36,7 +36,7 @@ android {
 }
 
 dependencies {
-
+    // Las dependencias se mantienen igual
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
