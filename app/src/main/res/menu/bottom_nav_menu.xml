@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/ic_home"
+        android:title="Inicio" />
+    <item
+        android:id="@+id/navigation_preselection"
+        android:icon="@drawable/ic_calculator"
+        android:title="Preselección" />
+    <item
+        android:id="@+id/navigation_selection"
+        android:icon="@drawable/ic_calculator"
+        android:title="Selección" />
+    <item
+        android:id="@+id/navigation_credits"
+        android:icon="@drawable/ic_info"
+        android:title="Créditos" />
+</menu>

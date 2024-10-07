@@ -9,14 +9,10 @@
         <item name="colorSecondaryVariant">@color/blue_medium</item>
         <item name="colorOnSecondary">@color/blue_dark</item>
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowBackground">@color/background_color</item>
+        <item name="android:textColorPrimary">@color/text_color_primary</item>
+        <item name="android:textColorSecondary">@color/text_color_secondary</item>
     </style>
 
     <style name="Theme.B18Calculator" parent="Base.Theme.B18Calculator" />
-
-    <!-- Splash Screen Theme -->
-    <style name="SplashTheme" parent="Theme.B18Calculator">
-        <item name="android:windowBackground">@drawable/splash_background</item>
-        <item name="android:statusBarColor">@color/blue_primary</item>
-    </style>
 </resources>

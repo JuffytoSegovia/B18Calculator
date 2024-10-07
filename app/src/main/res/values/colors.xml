@@ -5,4 +5,10 @@
     <color name="blue_primary">#003459</color>
     <color name="blue_medium">#007EA7</color>
     <color name="blue_light">#00A8E8</color>
+
+    <!-- Colores adicionales para el tema de la app -->
+    <color name="background_color">@color/white</color>
+    <color name="text_color_primary">@color/blue_dark</color>
+    <color name="text_color_secondary">@color/blue_medium</color>
+    <color name="accent_color">@color/blue_light</color>
 </resources>
