@@ -13,17 +13,14 @@ class HomeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
         view.findViewById<CardView>(R.id.preselectionCard).setOnClickListener {
-            // Navegar a la calculadora de preselección
             (activity as? MainActivity)?.navigateToPreselection()
         }
 
         view.findViewById<CardView>(R.id.selectionCard).setOnClickListener {
-            // Navegar a la calculadora de selección
             (activity as? MainActivity)?.navigateToSelection()
         }
 
         view.findViewById<CardView>(R.id.creditsCard).setOnClickListener {
-            // Navegar a los créditos
             (activity as? MainActivity)?.navigateToCredits()
         }
 

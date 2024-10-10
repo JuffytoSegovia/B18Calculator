@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var bottomNav: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,11 +23,11 @@ class MainActivity : AppCompatActivity() {
             loadFragment(HomeFragment())
         }
 
+        bottomNav = findViewById(R.id.bottomNavigation)
         setupBottomNavigation()
     }
 
     private fun setupBottomNavigation() {
-        val bottomNav: BottomNavigationView = findViewById(R.id.bottomNavigation)
         bottomNav.setOnItemSelectedListener { item ->
             when(item.itemId) {
                 R.id.navigation_home -> loadFragment(HomeFragment())
@@ -46,7 +47,18 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    fun navigateToPreselection() = loadFragment(PreselectionFragment())
-    fun navigateToSelection() = loadFragment(SelectionFragment())
-    fun navigateToCredits() = loadFragment(CreditsFragment())
+    fun navigateToPreselection() {
+        loadFragment(PreselectionFragment())
+        bottomNav.selectedItemId = R.id.navigation_preselection
+    }
+
+    fun navigateToSelection() {
+        loadFragment(SelectionFragment())
+        bottomNav.selectedItemId = R.id.navigation_selection
+    }
+
+    fun navigateToCredits() {
+        loadFragment(CreditsFragment())
+        bottomNav.selectedItemId = R.id.navigation_credits
+    }
 }
