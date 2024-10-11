@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.B18Calculator" parent="Theme.Material3.DayNight.NoActionBar">
@@ -9,13 +10,11 @@
         <item name="colorSecondaryVariant">@color/blue_dark</item>
         <item name="colorOnSecondary">@color/white</item>
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <item name="android:windowBackground">@color/blue_dark</item>
+        <item name="android:windowBackground">@color/background_color_dark</item>
+        <item name="android:colorBackground">@color/background_color_dark</item>
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:textColorSecondary">@color/blue_light</item>
     </style>
 
-    <style name="ToolbarTitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:textStyle">bold</item>
-        <item name="android:textAlignment">center</item>
-    </style>
+    <style name="Theme.B18Calculator" parent="Base.Theme.B18Calculator" />
 </resources>

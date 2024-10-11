@@ -1,7 +1,8 @@
 package com.juffyto.b18calculator
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -60,5 +61,25 @@ class MainActivity : AppCompatActivity() {
     fun navigateToCredits() {
         loadFragment(CreditsFragment())
         bottomNav.selectedItemId = R.id.navigation_credits
+    }
+
+    override fun onBackPressed() {
+        when {
+            bottomNav.selectedItemId != R.id.navigation_home -> {
+                bottomNav.selectedItemId = R.id.navigation_home
+            }
+            else -> {
+                showExitDialog()
+            }
+        }
+    }
+
+    private fun showExitDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Salir")
+            .setMessage("¿Estás seguro que deseas salir de la aplicación?")
+            .setPositiveButton("Sí") { _, _ -> finish() }
+            .setNegativeButton("No", null)
+            .show()
     }
 }

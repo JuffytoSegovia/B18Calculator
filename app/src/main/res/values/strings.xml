@@ -14,7 +14,32 @@
     <!-- ... otros strings ... -->
     <string name="credits_intro">B18 Calculator: Herramienta creada por estudiantes para ayudar a postulantes de Beca 18.</string>
     <string name="junior_name">Junior Segovia Chalco</string>
-    <string name="junior_description">Estudiante de ingeniería de sistemas empresariales en la Universidad Científica del Sur.</string>
+    <string name="junior_description">Estudiante de ingeniería de sistemas empresariales de la Universidad Científica del Sur.</string>
     <string name="juan_name">Juan Manuel Volkmar Padierna</string>
     <string name="juan_description">Estudiante de ingeniería de sistemas e informática de la Universidad Pontificia Bolivariana.</string>
+    <!-- Strings existentes -->
+    <string name="calculadora_preseleccion_title">Calculadora de Preselección</string>
+    <string name="calculadora_preseleccion_description">Utiliza nuestra herramienta para calcular y simular tu puntaje de preselección en Beca 18.</string>
+    <string name="nombre_hint">Tu nombre</string>
+    <string name="modalidad_hint">Modalidad de postulación</string>
+    <string name="enp_hint">Puntaje del Examen Nacional de Preselección (0-120)</string>
+    <string name="continuar">Continuar</string>
+    <string name="limpiar">Limpiar formulario</string>
+    <string name="calcular">Calcular Puntaje</string>
+    <string name="reiniciar">Reiniciar Calculadora</string>
+    <!-- Strings existentes -->
+    <string name="sisfoh_hint">Clasificación SISFOH</string>
+    <string name="departamento_hint">Departamento donde culmino la secundaria</string>
+    <string name="info_quintil_description">Información sobre quintiles</string>
+    <string name="quintil_info">
+        \n
+        ✅Quintil 1 (10 puntos): Amazonas, Ucayali, Ayacucho, Puno, Loreto\n
+        \n
+        ✅Quintil 2 (7 puntos): San Martín, Cusco, Huánuco, Apurímac, Huancavelica\n
+        \n
+        ✅Quintil 3 (5 puntos): Áncash, Tacna, Madre de Dios, Moquegua, Pasco, Cajamarca\n
+        \n
+        ✅Quintil 4 (2 puntos): Arequipa, Piura, Junín, Tumbes\n
+        \n
+        ✅Quintil 5 (0 puntos): Ica, Lambayeque, Lima, La Libertad</string>
 </resources>

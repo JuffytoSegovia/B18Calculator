@@ -8,6 +8,7 @@
 
     <!-- Colores adicionales para el tema de la app -->
     <color name="background_color">@color/white</color>
+    <color name="background_color_dark">@color/blue_dark</color>
     <color name="text_color_primary">@color/blue_dark</color>
     <color name="text_color_secondary">@color/blue_medium</color>
     <color name="accent_color">@color/blue_light</color>
