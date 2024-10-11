@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">B18 Calculator</string>
+    <string name="welcome">¡Hola!</string>
+    <string name="app_description">Bienvenido a la aplicación de B18 Calculator, encuentra herramientas que te ayuden en tu postulación.</string>
+    <string name="preselection_title">Calculadora de preselección</string>
+    <string name="preselection_description">Simula tu puntaje de preselección para beca 18</string>
+    <string name="selection_title">Calculadora de selección</string>
+    <string name="selection_description">Simula tu puntaje de selección para beca 18</string>
+    <string name="credits_title">Créditos</string>
+    <string name="credits_description">Conoce a los creadores del app</string>
+    <string name="icon_preselection">Icono de preselección</string>
+    <string name="icon_selection">Icono de selección</string>
+    <string name="icon_credits">Icono de créditos</string>
+    <!-- ... otros strings ... -->
+    <string name="credits_intro">B18 Calculator: Herramienta creada por estudiantes para ayudar a postulantes de Beca 18.</string>
+    <string name="junior_name">Junior Segovia Chalco</string>
+    <string name="junior_description">Estudiante de ingeniería de sistemas empresariales en la Universidad Científica del Sur.</string>
+    <string name="juan_name">Juan Manuel Volkmar Padierna</string>
+    <string name="juan_description">Estudiante de ingeniería de sistemas e informática de la Universidad Pontificia Bolivariana.</string>
 </resources>

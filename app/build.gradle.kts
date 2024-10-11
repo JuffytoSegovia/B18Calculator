@@ -37,6 +37,7 @@ android {
 
 dependencies {
     // Las dependencias se mantienen igual
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -45,4 +46,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    //Nueva dependencia
+    implementation(libs.circleimageview)
+
 }

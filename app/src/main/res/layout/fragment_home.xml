@@ -9,7 +9,7 @@
         android:id="@+id/welcomeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="¡Hola!"
+        android:text="@string/welcome"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
@@ -22,7 +22,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Bienvenido a la aplicación de B18 Calculator, encuentra herramientas que te ayuden en tu postulación."
+        android:text="@string/app_description"
         app:layout_constraintTop_toBottomOf="@id/welcomeText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -48,7 +48,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:src="@drawable/ic_preselection"
-                android:contentDescription="Icono de preselección"/>
+                android:contentDescription="@string/icon_preselection"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -59,14 +59,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Calculadora de preselección"
+                    android:text="@string/preselection_title"
                     android:textStyle="bold"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Simula tu puntaje de preselección para beca 18"
-                    android:textColor="@android:color/holo_red_light"/>
+                    android:text="@string/preselection_description"/>
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
@@ -92,7 +91,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:src="@drawable/ic_selection"
-                android:contentDescription="Icono de selección"/>
+                android:contentDescription="@string/icon_selection"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -103,14 +102,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Calculadora de selección"
+                    android:text="@string/selection_title"
                     android:textStyle="bold"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Simula tu puntaje de selección para beca 18"
-                    android:textColor="@android:color/holo_red_light"/>
+                    android:text="@string/selection_description"/>
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
@@ -136,7 +134,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:src="@drawable/ic_credits"
-                android:contentDescription="Icono de créditos"/>
+                android:contentDescription="@string/icon_credits"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -147,14 +145,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Créditos"
+                    android:text="@string/credits_title"
                     android:textStyle="bold"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Conoce a los creadores del app"
-                    android:textColor="@android:color/holo_red_light"/>
+                    android:text="@string/credits_description"/>
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
