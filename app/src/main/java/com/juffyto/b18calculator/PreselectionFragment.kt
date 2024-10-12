@@ -180,7 +180,6 @@ class PreselectionFragment : Fragment() {
 
     private fun setupLenguaOriginariaSpinner() {
         val opcionesLengua = arrayOf(
-            "Seleccione una opción",
             "Hablante de lengua de primera prioridad - 10 puntos",
             "Hablante de lengua de segunda prioridad - 5 puntos"
         )
@@ -283,13 +282,6 @@ class PreselectionFragment : Fragment() {
             isValid = false
         }
 
-        if (spinnerModalidad.text.toString() == "EIB" && spinnerLenguaOriginaria.text.isNullOrBlank()) {
-            (spinnerLenguaOriginaria.parent.parent as TextInputLayout).error = "Seleccione una opción de lengua originaria"
-            isValid = false
-        } else {
-            (spinnerLenguaOriginaria.parent.parent as TextInputLayout).error = null
-        }
-
         return isValid
     }
 
@@ -304,6 +296,12 @@ class PreselectionFragment : Fragment() {
         val enp = editTextENP.text.toString().toInt()
         val sisfoh = spinnerSisfoh.text.toString()
         val departamento = spinnerDepartamento.text.toString().split(" - ")[0]
+
+        // Validación para la lengua originaria en modalidad EIB
+        if (modalidad == "EIB" && spinnerLenguaOriginaria.text.isNullOrBlank()) {
+            (spinnerLenguaOriginaria.parent.parent as? TextInputLayout)?.error = "Este campo es obligatorio para la modalidad EIB"
+            return
+        }
 
         val puntajeENP = enp
         val puntajeSisfoh = calcularPuntajeSisfoh(sisfoh, modalidad)
