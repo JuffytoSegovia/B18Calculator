@@ -28,6 +28,10 @@ class PreselectionFragment : Fragment() {
     private lateinit var spinnerDepartamento: AutoCompleteTextView
     private lateinit var textViewResultado: TextView
 
+    private lateinit var layoutModalidad: TextInputLayout
+    private lateinit var layoutSisfoh: TextInputLayout
+    private lateinit var layoutDepartamento: TextInputLayout
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_preselection, container, false)
     }
@@ -47,6 +51,10 @@ class PreselectionFragment : Fragment() {
         spinnerSisfoh = view.findViewById(R.id.spinnerSisfoh)
         spinnerDepartamento = view.findViewById(R.id.spinnerDepartamento)
         textViewResultado = view.findViewById(R.id.textViewResultado)
+
+        layoutModalidad = view.findViewById(R.id.layoutModalidad)
+        layoutSisfoh = view.findViewById(R.id.layoutSisfoh)
+        layoutDepartamento = view.findViewById(R.id.layoutDepartamento)
 
         setupSpinners()
         setupENPValidation()
@@ -83,12 +91,16 @@ class PreselectionFragment : Fragment() {
 
         spinnerModalidad.setOnItemClickListener { _, _, _, _ ->
             updateSisfohOptions()
+            layoutModalidad.error = null
         }
 
         updateSisfohOptions()
 
         val departamentos = resources.getStringArray(R.array.departamentos)
         spinnerDepartamento.setAdapter(ArrayAdapter(requireContext(), R.layout.list_item, departamentos))
+
+        spinnerSisfoh.setOnItemClickListener { _, _, _, _ -> layoutSisfoh.error = null }
+        spinnerDepartamento.setOnItemClickListener { _, _, _, _ -> layoutDepartamento.error = null }
     }
 
     private fun updateSisfohOptions() {
@@ -97,14 +109,22 @@ class PreselectionFragment : Fragment() {
         } else {
             resources.getStringArray(R.array.sisfoh_options)
         }
-        spinnerSisfoh.setAdapter(ArrayAdapter(requireContext(), R.layout.list_item, sisfohOptions))
-        spinnerSisfoh.text.clear() // Limpiar la selección actual
+        val sisfohAdapter = ArrayAdapter(requireContext(), R.layout.list_item, sisfohOptions)
+        spinnerSisfoh.setAdapter(sisfohAdapter)
+
+        // No limpiar el texto aquí, ya que podría borrar los datos cargados
+        // spinnerSisfoh.text.clear()
+        layoutSisfoh.error = null
     }
 
     private fun setupENPValidation() {
         editTextENP.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                validateENP(s.toString())
+                if (s?.isNotEmpty() == true) {
+                    validateENP(s.toString())
+                } else {
+                    hideENPError()
+                }
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -151,21 +171,24 @@ class PreselectionFragment : Fragment() {
         }
 
         if (spinnerModalidad.text.isNullOrBlank()) {
-            (spinnerModalidad.parent.parent as TextInputLayout).error = "Seleccione una modalidad"
+            layoutModalidad.error = "Seleccione una modalidad"
             isValid = false
         }
 
-        if (!validateENP(editTextENP.text.toString())) {
+        if (editTextENP.text.isNullOrBlank()) {
+            showENPError("Ingrese un número válido")
+            isValid = false
+        } else if (!validateENP(editTextENP.text.toString())) {
             isValid = false
         }
 
         if (spinnerSisfoh.text.isNullOrBlank()) {
-            (spinnerSisfoh.parent.parent as TextInputLayout).error = "Seleccione una clasificación SISFOH"
+            layoutSisfoh.error = "Seleccione una clasificación SISFOH"
             isValid = false
         }
 
         if (spinnerDepartamento.text.isNullOrBlank()) {
-            (spinnerDepartamento.parent.parent as TextInputLayout).error = "Seleccione un departamento"
+            layoutDepartamento.error = "Seleccione un departamento"
             isValid = false
         }
 
@@ -191,13 +214,7 @@ class PreselectionFragment : Fragment() {
     }
 
     private fun resetCalculator() {
-        editTextNombre.text?.clear()
-        spinnerModalidad.text?.clear()
-        editTextENP.text?.clear()
-        spinnerSisfoh.text?.clear()
-        spinnerDepartamento.text?.clear()
-        hideENPError()
-
+        limpiarFormulario()
         layoutResultado.visibility = View.GONE
         layoutContinuacion.visibility = View.GONE
         layoutInicio.visibility = View.VISIBLE
@@ -210,6 +227,11 @@ class PreselectionFragment : Fragment() {
         spinnerSisfoh.text?.clear()
         spinnerDepartamento.text?.clear()
         hideENPError()
+
+        editTextNombre.error = null
+        layoutModalidad.error = null
+        layoutSisfoh.error = null
+        layoutDepartamento.error = null
 
         // Limpiar datos guardados
         val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
@@ -231,10 +253,22 @@ class PreselectionFragment : Fragment() {
     private fun cargarDatosGuardados() {
         val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
         editTextNombre.setText(sharedPrefs.getString("nombre", ""))
-        spinnerModalidad.setText(sharedPrefs.getString("modalidad", ""))
+
+        // Primero configuramos los adaptadores
+        setupSpinners()
+
+        // Luego cargamos los datos guardados
+        val modalidadGuardada = sharedPrefs.getString("modalidad", "")
+        spinnerModalidad.setText(modalidadGuardada, false)
+
+        // Actualizar opciones de SISFOH basadas en la modalidad guardada
+        if (modalidadGuardada == "Ordinaria") {
+            updateSisfohOptions()
+        }
+
         editTextENP.setText(sharedPrefs.getString("enp", ""))
-        spinnerSisfoh.setText(sharedPrefs.getString("sisfoh", ""))
-        spinnerDepartamento.setText(sharedPrefs.getString("departamento", ""))
+        spinnerSisfoh.setText(sharedPrefs.getString("sisfoh", ""), false)
+        spinnerDepartamento.setText(sharedPrefs.getString("departamento", ""), false)
     }
 
     private fun showQuintilInfo() {
