@@ -42,4 +42,11 @@
         ✅Quintil 4 (2 puntos): Arequipa, Piura, Junín, Tumbes\n
         \n
         ✅Quintil 5 (0 puntos): Ica, Lambayeque, Lima, La Libertad</string>
+    <string name="lengua_originaria_info">
+    ☑️Lenguas de primera prioridad:
+    ASHANINKA, ASHENINKA, AWAJUN, CASHINAHUA, ESE EJA, KAKATAIBO, KICHWA, KUKAMA KUKAMIRIA, MATSIGENKA, NOMATSIGENGA, RESIGARO, SHARANAHUA, SHAWI, SHIPIBO-KONIBO, SHIWILU, WAMPIS, YANESHA, YINE
+
+    ☑️Lenguas de segunda prioridad:
+    AIMARA, QUECHUA ANCASH, QUECHUA CAJAMARCA, QUECHUA CAJATAMBO, OYÓN, HUAURA, QUECHUA CHANKA, QUECHUA COLLAO, QUECHUA HUANUCO, QUECHUA INKAWASI CAÑARIS, QUECHUA PASCO, QUECHUA PATAZ, QUECHUA WANKA, QUECHUA YAUYAS
+</string>
 </resources>

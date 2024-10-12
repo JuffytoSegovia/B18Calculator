@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -19,6 +20,7 @@ class PreselectionFragment : Fragment() {
     private lateinit var layoutInicio: LinearLayout
     private lateinit var layoutContinuacion: LinearLayout
     private lateinit var layoutResultado: LinearLayout
+    private lateinit var layoutLenguaOriginaria: LinearLayout
 
     private lateinit var editTextNombre: TextInputEditText
     private lateinit var spinnerModalidad: AutoCompleteTextView
@@ -26,11 +28,40 @@ class PreselectionFragment : Fragment() {
     private lateinit var textViewENPError: TextView
     private lateinit var spinnerSisfoh: AutoCompleteTextView
     private lateinit var spinnerDepartamento: AutoCompleteTextView
-    private lateinit var textViewResultado: TextView
+    private lateinit var spinnerLenguaOriginaria: AutoCompleteTextView
 
     private lateinit var layoutModalidad: TextInputLayout
     private lateinit var layoutSisfoh: TextInputLayout
     private lateinit var layoutDepartamento: TextInputLayout
+
+    private lateinit var buttonContinuar: Button
+    private lateinit var buttonCalcular: Button
+    private lateinit var buttonReiniciar: Button
+    private lateinit var buttonLimpiar: Button
+    private lateinit var buttonInfoQuintil: ImageButton
+    private lateinit var buttonInfoLengua: ImageButton
+
+    private lateinit var checkboxConcursoNacional: CheckBox
+    private lateinit var checkboxConcursoParticipacion: CheckBox
+    private lateinit var checkboxJuegosNacionales: CheckBox
+    private lateinit var checkboxJuegosParticipacion: CheckBox
+
+    private lateinit var checkboxDiscapacidad: CheckBox
+    private lateinit var checkboxBomberos: CheckBox
+    private lateinit var checkboxVoluntarios: CheckBox
+    private lateinit var checkboxComunidadNativa: CheckBox
+    private lateinit var checkboxMetalesPesados: CheckBox
+    private lateinit var checkboxPoblacionBeneficiaria: CheckBox
+    private lateinit var checkboxOrfandad: CheckBox
+    private lateinit var checkboxDesproteccion: CheckBox
+    private lateinit var checkboxAgenteSalud: CheckBox
+
+    private lateinit var textViewNombreResultado: TextView
+    private lateinit var buttonPuntajeResultado: Button
+    private lateinit var textViewDesglosePuntaje: TextView
+    private lateinit var textViewFormula: TextView
+    private lateinit var textViewPuntajeMaximo: TextView
+    private lateinit var textViewMensajeAnimo: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_preselection, container, false)
@@ -39,10 +70,18 @@ class PreselectionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Inicializar vistas
+        initializeViews(view)
+        setupListeners()
+        setupSpinners()
+        setupENPValidation()
+        cargarDatosGuardados()
+    }
+
+    private fun initializeViews(view: View) {
         layoutInicio = view.findViewById(R.id.layoutInicio)
         layoutContinuacion = view.findViewById(R.id.layoutContinuacion)
         layoutResultado = view.findViewById(R.id.layoutResultado)
+        layoutLenguaOriginaria = view.findViewById(R.id.layoutLenguaOriginaria)
 
         editTextNombre = view.findViewById(R.id.editTextNombre)
         spinnerModalidad = view.findViewById(R.id.spinnerModalidad)
@@ -50,57 +89,102 @@ class PreselectionFragment : Fragment() {
         textViewENPError = view.findViewById(R.id.textViewENPError)
         spinnerSisfoh = view.findViewById(R.id.spinnerSisfoh)
         spinnerDepartamento = view.findViewById(R.id.spinnerDepartamento)
-        textViewResultado = view.findViewById(R.id.textViewResultado)
+        spinnerLenguaOriginaria = view.findViewById(R.id.spinnerLenguaOriginaria)
 
         layoutModalidad = view.findViewById(R.id.layoutModalidad)
         layoutSisfoh = view.findViewById(R.id.layoutSisfoh)
         layoutDepartamento = view.findViewById(R.id.layoutDepartamento)
 
-        setupSpinners()
-        setupENPValidation()
+        buttonContinuar = view.findViewById(R.id.buttonContinuar)
+        buttonCalcular = view.findViewById(R.id.buttonCalcular)
+        buttonReiniciar = view.findViewById(R.id.buttonReiniciar)
+        buttonLimpiar = view.findViewById(R.id.buttonLimpiar)
+        buttonInfoQuintil = view.findViewById(R.id.buttonInfoQuintil)
+        buttonInfoLengua = view.findViewById(R.id.buttonInfoLengua)
 
-        view.findViewById<Button>(R.id.buttonContinuar).setOnClickListener {
+        checkboxConcursoNacional = view.findViewById(R.id.checkboxConcursoNacional)
+        checkboxConcursoParticipacion = view.findViewById(R.id.checkboxConcursoParticipacion)
+        checkboxJuegosNacionales = view.findViewById(R.id.checkboxJuegosNacionales)
+        checkboxJuegosParticipacion = view.findViewById(R.id.checkboxJuegosParticipacion)
+
+        checkboxDiscapacidad = view.findViewById(R.id.checkboxDiscapacidad)
+        checkboxBomberos = view.findViewById(R.id.checkboxBomberos)
+        checkboxVoluntarios = view.findViewById(R.id.checkboxVoluntarios)
+        checkboxComunidadNativa = view.findViewById(R.id.checkboxComunidadNativa)
+        checkboxMetalesPesados = view.findViewById(R.id.checkboxMetalesPesados)
+        checkboxPoblacionBeneficiaria = view.findViewById(R.id.checkboxPoblacionBeneficiaria)
+        checkboxOrfandad = view.findViewById(R.id.checkboxOrfandad)
+        checkboxDesproteccion = view.findViewById(R.id.checkboxDesproteccion)
+        checkboxAgenteSalud = view.findViewById(R.id.checkboxAgenteSalud)
+
+        textViewNombreResultado = view.findViewById(R.id.textViewNombreResultado)
+        buttonPuntajeResultado = view.findViewById(R.id.buttonPuntajeResultado)
+        textViewDesglosePuntaje = view.findViewById(R.id.textViewDesglosePuntaje)
+        textViewFormula = view.findViewById(R.id.textViewFormula)
+        textViewPuntajeMaximo = view.findViewById(R.id.textViewPuntajeMaximo)
+        textViewMensajeAnimo = view.findViewById(R.id.textViewMensajeAnimo)
+    }
+
+    private fun setupListeners() {
+        buttonContinuar.setOnClickListener {
             if (validateInitialInputs()) {
                 showContinuationLayout()
             }
         }
 
-        view.findViewById<Button>(R.id.buttonCalcular).setOnClickListener {
+        buttonCalcular.setOnClickListener {
             calculateAndShowResult()
         }
 
-        view.findViewById<Button>(R.id.buttonReiniciar).setOnClickListener {
+        buttonReiniciar.setOnClickListener {
             resetCalculator()
         }
 
-        view.findViewById<Button>(R.id.buttonLimpiar).setOnClickListener {
+        buttonLimpiar.setOnClickListener {
             limpiarFormulario()
         }
 
-        view.findViewById<ImageButton>(R.id.buttonInfoQuintil).setOnClickListener {
+        buttonInfoQuintil.setOnClickListener {
             showQuintilInfo()
         }
 
-        // Cargar datos guardados, si existen
-        cargarDatosGuardados()
+        buttonInfoLengua.setOnClickListener {
+            showLenguaInfo()
+        }
+
+        spinnerModalidad.setOnItemClickListener { _, _, _, _ ->
+            updateSisfohOptions()
+            updateLenguaOriginariaVisibility()
+            updateCheckboxes()
+            layoutModalidad.error = null
+        }
     }
 
     private fun setupSpinners() {
         val modalidades = resources.getStringArray(R.array.modalidades)
         spinnerModalidad.setAdapter(ArrayAdapter(requireContext(), R.layout.list_item, modalidades))
 
-        spinnerModalidad.setOnItemClickListener { _, _, _, _ ->
-            updateSisfohOptions()
-            layoutModalidad.error = null
-        }
-
         updateSisfohOptions()
 
-        val departamentos = resources.getStringArray(R.array.departamentos)
-        spinnerDepartamento.setAdapter(ArrayAdapter(requireContext(), R.layout.list_item, departamentos))
+        val departamentosConPuntaje = resources.getStringArray(R.array.departamentos).map { departamento ->
+            val puntaje = calcularPuntajeQuintil(departamento)
+            "$departamento - $puntaje puntos"
+        }
+        spinnerDepartamento.setAdapter(ArrayAdapter(requireContext(), R.layout.list_item, departamentosConPuntaje))
 
         spinnerSisfoh.setOnItemClickListener { _, _, _, _ -> layoutSisfoh.error = null }
         spinnerDepartamento.setOnItemClickListener { _, _, _, _ -> layoutDepartamento.error = null }
+
+        setupLenguaOriginariaSpinner()
+    }
+
+    private fun setupLenguaOriginariaSpinner() {
+        val opcionesLengua = arrayOf(
+            "Seleccione una opción",
+            "Hablante de lengua de primera prioridad - 10 puntos",
+            "Hablante de lengua de segunda prioridad - 5 puntos"
+        )
+        spinnerLenguaOriginaria.setAdapter(ArrayAdapter(requireContext(), R.layout.list_item, opcionesLengua))
     }
 
     private fun updateSisfohOptions() {
@@ -109,12 +193,19 @@ class PreselectionFragment : Fragment() {
         } else {
             resources.getStringArray(R.array.sisfoh_options)
         }
-        val sisfohAdapter = ArrayAdapter(requireContext(), R.layout.list_item, sisfohOptions)
-        spinnerSisfoh.setAdapter(sisfohAdapter)
-
-        // No limpiar el texto aquí, ya que podría borrar los datos cargados
-        // spinnerSisfoh.text.clear()
+        spinnerSisfoh.setAdapter(ArrayAdapter(requireContext(), R.layout.list_item, sisfohOptions))
         layoutSisfoh.error = null
+    }
+
+    private fun updateLenguaOriginariaVisibility() {
+        layoutLenguaOriginaria.visibility = if (spinnerModalidad.text.toString() == "EIB") View.VISIBLE else View.GONE
+    }
+
+    private fun updateCheckboxes() {
+        val modalidad = spinnerModalidad.text.toString()
+        checkboxDesproteccion.isEnabled = modalidad == "Protección"
+        checkboxComunidadNativa.isEnabled = modalidad != "CNA y PA"
+        checkboxOrfandad.isEnabled = modalidad != "Protección"
     }
 
     private fun setupENPValidation() {
@@ -192,6 +283,13 @@ class PreselectionFragment : Fragment() {
             isValid = false
         }
 
+        if (spinnerModalidad.text.toString() == "EIB" && spinnerLenguaOriginaria.text.isNullOrBlank()) {
+            (spinnerLenguaOriginaria.parent.parent as TextInputLayout).error = "Seleccione una opción de lengua originaria"
+            isValid = false
+        } else {
+            (spinnerLenguaOriginaria.parent.parent as TextInputLayout).error = null
+        }
+
         return isValid
     }
 
@@ -201,16 +299,126 @@ class PreselectionFragment : Fragment() {
     }
 
     private fun calculateAndShowResult() {
-        // Aquí iría la lógica de cálculo completa
-        // Por ahora, usaremos un cálculo simplificado
+        val nombre = editTextNombre.text.toString()
+        val modalidad = spinnerModalidad.text.toString()
         val enp = editTextENP.text.toString().toInt()
-        val resultado = min(enp + 50, 170) // Ejemplo simplificado
+        val sisfoh = spinnerSisfoh.text.toString()
+        val departamento = spinnerDepartamento.text.toString().split(" - ")[0]
 
-        val mensajeResultado = "Hola ${editTextNombre.text}, tu puntaje estimado es: $resultado"
-        textViewResultado.text = mensajeResultado
+        val puntajeENP = enp
+        val puntajeSisfoh = calcularPuntajeSisfoh(sisfoh, modalidad)
+        val puntajeQuintil = calcularPuntajeQuintil(departamento)
+        val puntajeExtracurricular = calcularPuntajeExtracurricular()
+        val puntajePriorizable = calcularPuntajePriorizable()
+        val puntajeLengua = if (modalidad == "EIB") calcularPuntajeLengua() else 0
 
+        val puntajeTotal = puntajeENP + puntajeSisfoh + puntajeQuintil + puntajeExtracurricular + puntajePriorizable + puntajeLengua
+
+        mostrarResultado(nombre, modalidad, puntajeTotal, puntajeENP, puntajeSisfoh, puntajeQuintil, puntajeExtracurricular, puntajePriorizable, puntajeLengua)
+    }
+
+    private fun calcularPuntajeSisfoh(sisfoh: String, modalidad: String): Int {
+        return when {
+            sisfoh.contains("extrema") -> 5
+            sisfoh.contains("Pobreza (P)") && modalidad != "Ordinaria" -> 2
+            else -> 0
+        }
+    }
+
+    private fun calcularPuntajeQuintil(departamento: String): Int {
+        val quintil1 = listOf("Amazonas", "Ucayali", "Ayacucho", "Puno", "Loreto")
+        val quintil2 = listOf("San Martín", "Cusco", "Huánuco", "Apurímac", "Huancavelica")
+        val quintil3 = listOf("Áncash", "Tacna", "Madre de Dios", "Moquegua", "Pasco", "Cajamarca")
+        val quintil4 = listOf("Arequipa", "Piura", "Junín", "Tumbes")
+
+        return when {
+            quintil1.contains(departamento) -> 10
+            quintil2.contains(departamento) -> 7
+            quintil3.contains(departamento) -> 5
+            quintil4.contains(departamento) -> 2
+            else -> 0
+        }
+    }
+
+    private fun calcularPuntajeExtracurricular(): Int {
+        var puntaje = 0
+        if (checkboxConcursoNacional.isChecked) puntaje += 5
+        if (checkboxConcursoParticipacion.isChecked) puntaje += 2
+        if (checkboxJuegosNacionales.isChecked) puntaje += 5
+        if (checkboxJuegosParticipacion.isChecked) puntaje += 2
+        return min(puntaje, 10)
+    }
+
+    private fun calcularPuntajePriorizable(): Int {
+        var puntaje = 0
+        if (checkboxDiscapacidad.isChecked) puntaje += 5
+        if (checkboxBomberos.isChecked) puntaje += 5
+        if (checkboxVoluntarios.isChecked) puntaje += 5
+        if (checkboxComunidadNativa.isChecked) puntaje += 5
+        if (checkboxMetalesPesados.isChecked) puntaje += 5
+        if (checkboxPoblacionBeneficiaria.isChecked) puntaje += 5
+        if (checkboxOrfandad.isChecked) puntaje += 5
+        if (checkboxDesproteccion.isChecked) puntaje += 5
+        if (checkboxAgenteSalud.isChecked) puntaje += 5
+        return min(puntaje, 25)
+    }
+
+    private fun calcularPuntajeLengua(): Int {
+        return when (spinnerLenguaOriginaria.text.toString()) {
+            "Hablante de lengua de primera prioridad - 10 puntos" -> 10
+            "Hablante de lengua de segunda prioridad - 5 puntos" -> 5
+            else -> 0
+        }
+    }
+
+    private fun mostrarResultado(nombre: String, modalidad: String, puntajeTotal: Int,
+                                 puntajeENP: Int, puntajeSisfoh: Int, puntajeQuintil: Int,
+                                 puntajeExtracurricular: Int, puntajePriorizable: Int, puntajeLengua: Int) {
         layoutContinuacion.visibility = View.GONE
         layoutResultado.visibility = View.VISIBLE
+
+        textViewNombreResultado.text = "Reporte de Preselección para $nombre"
+
+        val puntajeMaximo = if (modalidad == "EIB") 180 else 170
+        val puntajeFinal = min(puntajeTotal, puntajeMaximo)
+
+        buttonPuntajeResultado.text = "Tu puntaje estimado de preselección es: $puntajeFinal puntos"
+        buttonPuntajeResultado.setBackgroundColor(obtenerColorPuntaje(puntajeFinal))
+
+        val desglose = StringBuilder()
+        desglose.append("✅ Modalidad: $modalidad\n")
+        desglose.append("✅ ENP: $puntajeENP puntos\n")
+        desglose.append("✅ SISFOH: $puntajeSisfoh puntos\n")
+        desglose.append("✅ Quintil: $puntajeQuintil puntos\n")
+        desglose.append("✅ Actividades extracurriculares: $puntajeExtracurricular puntos\n")
+        desglose.append("✅ Condiciones priorizables: $puntajePriorizable puntos\n")
+        if (modalidad == "EIB") {
+            desglose.append("✅ Lengua originaria: $puntajeLengua puntos\n")
+        }
+        textViewDesglosePuntaje.text = desglose.toString()
+
+        textViewFormula.text = "Fórmula: PS = ENP + S + T + (CE o CEP + JD o JDP)max 10 + (D + B + V + IA + PEM + PD + OR + DF + ACS)max 25" +
+                if (modalidad == "EIB") " + LO" else ""
+
+        textViewPuntajeMaximo.text = "Puntaje máximo para esta modalidad: $puntajeMaximo puntos"
+
+        textViewMensajeAnimo.text = generarMensajeAnimo(puntajeFinal)
+    }
+
+    private fun obtenerColorPuntaje(puntaje: Int): Int {
+        return when {
+            puntaje >= 100 -> ContextCompat.getColor(requireContext(), R.color.green)
+            puntaje >= 70 -> ContextCompat.getColor(requireContext(), R.color.yellow)
+            else -> ContextCompat.getColor(requireContext(), R.color.red)
+        }
+    }
+
+    private fun generarMensajeAnimo(puntaje: Int): String {
+        return when {
+            puntaje >= 100 -> "¡Excelente trabajo! Tienes grandes posibilidades de ganar la beca. ¡Sigue adelante!"
+            puntaje >= 70 -> "¡Buen esfuerzo! Estás en buen camino para obtener la beca. ¡No te rindas!"
+            else -> "Cada punto cuenta. Sigue trabajando duro y no pierdas la esperanza. ¡Tú puedes lograrlo!"
+        }
     }
 
     private fun resetCalculator() {
@@ -226,12 +434,33 @@ class PreselectionFragment : Fragment() {
         editTextENP.text?.clear()
         spinnerSisfoh.text?.clear()
         spinnerDepartamento.text?.clear()
+        spinnerLenguaOriginaria.text?.clear()
         hideENPError()
 
         editTextNombre.error = null
         layoutModalidad.error = null
         layoutSisfoh.error = null
         layoutDepartamento.error = null
+        (spinnerLenguaOriginaria.parent.parent as TextInputLayout).error = null
+
+        // Limpiar checkboxes
+        checkboxConcursoNacional.isChecked = false
+        checkboxConcursoParticipacion.isChecked = false
+        checkboxJuegosNacionales.isChecked = false
+        checkboxJuegosParticipacion.isChecked = false
+
+        checkboxDiscapacidad.isChecked = false
+        checkboxBomberos.isChecked = false
+        checkboxVoluntarios.isChecked = false
+        checkboxComunidadNativa.isChecked = false
+        checkboxMetalesPesados.isChecked = false
+        checkboxPoblacionBeneficiaria.isChecked = false
+        checkboxOrfandad.isChecked = false
+        checkboxDesproteccion.isChecked = false
+        checkboxAgenteSalud.isChecked = false
+
+        updateCheckboxes()
+        updateLenguaOriginariaVisibility()
 
         // Limpiar datos guardados
         val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
@@ -246,6 +475,7 @@ class PreselectionFragment : Fragment() {
             putString("enp", editTextENP.text.toString())
             putString("sisfoh", spinnerSisfoh.text.toString())
             putString("departamento", spinnerDepartamento.text.toString())
+            putString("lenguaOriginaria", spinnerLenguaOriginaria.text.toString())
             apply()
         }
     }
@@ -254,14 +484,9 @@ class PreselectionFragment : Fragment() {
         val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
         editTextNombre.setText(sharedPrefs.getString("nombre", ""))
 
-        // Primero configuramos los adaptadores
-        setupSpinners()
-
-        // Luego cargamos los datos guardados
         val modalidadGuardada = sharedPrefs.getString("modalidad", "")
         spinnerModalidad.setText(modalidadGuardada, false)
 
-        // Actualizar opciones de SISFOH basadas en la modalidad guardada
         if (modalidadGuardada == "Ordinaria") {
             updateSisfohOptions()
         }
@@ -269,12 +494,24 @@ class PreselectionFragment : Fragment() {
         editTextENP.setText(sharedPrefs.getString("enp", ""))
         spinnerSisfoh.setText(sharedPrefs.getString("sisfoh", ""), false)
         spinnerDepartamento.setText(sharedPrefs.getString("departamento", ""), false)
+        spinnerLenguaOriginaria.setText(sharedPrefs.getString("lenguaOriginaria", ""), false)
+
+        updateLenguaOriginariaVisibility()
+        updateCheckboxes()
     }
 
     private fun showQuintilInfo() {
         AlertDialog.Builder(requireContext())
             .setTitle("Información de Quintiles")
             .setMessage(R.string.quintil_info)
+            .setPositiveButton("Entendido") { dialog, _ -> dialog.dismiss() }
+            .show()
+    }
+
+    private fun showLenguaInfo() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Información de Lenguas Originarias")
+            .setMessage(R.string.lengua_originaria_info)
             .setPositiveButton("Entendido") { dialog, _ -> dialog.dismiss() }
             .show()
     }

@@ -12,4 +12,8 @@
     <color name="text_color_primary">@color/blue_dark</color>
     <color name="text_color_secondary">@color/blue_medium</color>
     <color name="accent_color">@color/blue_light</color>
+    <!-- Colores de resultado -->
+    <color name="green">#4CAF50</color>
+    <color name="yellow">#FFEB3B</color>
+    <color name="red">#F44336</color>
 </resources>
