@@ -6,6 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.cardview.widget.CardView
+import android.content.Intent
+import android.net.Uri
+import android.widget.Button
 
 class HomeFragment : Fragment() {
 
@@ -24,6 +27,18 @@ class HomeFragment : Fragment() {
             (activity as? MainActivity)?.navigateToCredits()
         }
 
+        view.findViewById<Button>(R.id.buttonPostulaBeca18).setOnClickListener {
+            openBeca18Website()
+        }
+
         return view
     }
+
+    private fun openBeca18Website() {
+        val url = "https://www.pronabec.gob.pe/beca-18/"
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(url)
+        startActivity(intent)
+    }
+
 }
