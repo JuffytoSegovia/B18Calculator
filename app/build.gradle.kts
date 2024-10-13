@@ -49,5 +49,6 @@ dependencies {
 
     //Nueva dependencia
     implementation(libs.circleimageview)
+    implementation("com.google.code.gson:gson:2.8.9")
 
 }
