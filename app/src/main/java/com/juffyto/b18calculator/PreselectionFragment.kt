@@ -326,6 +326,7 @@ class PreselectionFragment : Fragment() {
         layoutContinuacion.visibility = View.VISIBLE
         layoutResultado.visibility = View.GONE
         currentWindow = 2
+        guardarDatos() // Guardar datos cuando se muestra la ventana 2
     }
 
     private fun calculateAndShowResult() {
@@ -352,6 +353,7 @@ class PreselectionFragment : Fragment() {
 
         mostrarResultado(nombre, modalidad, puntajeTotal, puntajeENP, puntajeSisfoh, puntajeQuintil, puntajeExtracurricular, puntajePriorizable, puntajeLengua)
         currentWindow = 3
+        guardarDatos() // Guardar datos cuando se muestra la ventana 3
     }
 
     private fun calcularPuntajeSisfoh(sisfoh: String, modalidad: String): Int {
@@ -556,6 +558,21 @@ class PreselectionFragment : Fragment() {
             putInt("colorPuntaje", buttonPuntajeResultado.currentTextColor)
             putInt("colorBoton", buttonPuntajeResultado.backgroundTintList?.defaultColor ?: Color.BLACK)
 
+            // Guardar estado de los checkboxes
+            putBoolean("checkboxConcursoNacional", checkboxConcursoNacional.isChecked)
+            putBoolean("checkboxConcursoParticipacion", checkboxConcursoParticipacion.isChecked)
+            putBoolean("checkboxJuegosNacionales", checkboxJuegosNacionales.isChecked)
+            putBoolean("checkboxJuegosParticipacion", checkboxJuegosParticipacion.isChecked)
+            putBoolean("checkboxDiscapacidad", checkboxDiscapacidad.isChecked)
+            putBoolean("checkboxBomberos", checkboxBomberos.isChecked)
+            putBoolean("checkboxVoluntarios", checkboxVoluntarios.isChecked)
+            putBoolean("checkboxComunidadNativa", checkboxComunidadNativa.isChecked)
+            putBoolean("checkboxMetalesPesados", checkboxMetalesPesados.isChecked)
+            putBoolean("checkboxPoblacionBeneficiaria", checkboxPoblacionBeneficiaria.isChecked)
+            putBoolean("checkboxOrfandad", checkboxOrfandad.isChecked)
+            putBoolean("checkboxDesproteccion", checkboxDesproteccion.isChecked)
+            putBoolean("checkboxAgenteSalud", checkboxAgenteSalud.isChecked)
+
             apply()
         }
     }
@@ -592,6 +609,22 @@ class PreselectionFragment : Fragment() {
         buttonPuntajeResultado.setTextColor(sharedPrefs.getInt("colorPuntaje", ContextCompat.getColor(requireContext(), R.color.black)))
         buttonPuntajeResultado.backgroundTintList = ColorStateList.valueOf(colorBoton)
 
+        // Cargar estado de los checkboxes
+        checkboxConcursoNacional.isChecked = sharedPrefs.getBoolean("checkboxConcursoNacional", false)
+        checkboxConcursoParticipacion.isChecked = sharedPrefs.getBoolean("checkboxConcursoParticipacion", false)
+        checkboxJuegosNacionales.isChecked = sharedPrefs.getBoolean("checkboxJuegosNacionales", false)
+        checkboxJuegosParticipacion.isChecked = sharedPrefs.getBoolean("checkboxJuegosParticipacion", false)
+        checkboxDiscapacidad.isChecked = sharedPrefs.getBoolean("checkboxDiscapacidad", false)
+        checkboxBomberos.isChecked = sharedPrefs.getBoolean("checkboxBomberos", false)
+        checkboxVoluntarios.isChecked = sharedPrefs.getBoolean("checkboxVoluntarios", false)
+        checkboxComunidadNativa.isChecked = sharedPrefs.getBoolean("checkboxComunidadNativa", false)
+        checkboxMetalesPesados.isChecked = sharedPrefs.getBoolean("checkboxMetalesPesados", false)
+        checkboxPoblacionBeneficiaria.isChecked = sharedPrefs.getBoolean("checkboxPoblacionBeneficiaria", false)
+        checkboxOrfandad.isChecked = sharedPrefs.getBoolean("checkboxOrfandad", false)
+        checkboxDesproteccion.isChecked = sharedPrefs.getBoolean("checkboxDesproteccion", false)
+        checkboxAgenteSalud.isChecked = sharedPrefs.getBoolean("checkboxAgenteSalud", false)
+
+        updateCheckboxes()
         restoreCurrentWindow()
     }
 
