@@ -64,6 +64,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+        if (currentFragment is PreselectionFragment) {
+            if (currentFragment.onBackPressed()) {
+                return
+            }
+        }
+
         when {
             bottomNav.selectedItemId != R.id.navigation_home -> {
                 bottomNav.selectedItemId = R.id.navigation_home

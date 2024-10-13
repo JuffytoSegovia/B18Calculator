@@ -300,6 +300,27 @@ class PreselectionFragment : Fragment() {
         return isValid
     }
 
+    fun onBackPressed(): Boolean {
+        return when (currentWindow) {
+            3 -> {
+                showContinuationLayout()
+                true
+            }
+            2 -> {
+                showInitialLayout()
+                true
+            }
+            else -> false
+        }
+    }
+
+    private fun showInitialLayout() {
+        layoutInicio.visibility = View.VISIBLE
+        layoutContinuacion.visibility = View.GONE
+        layoutResultado.visibility = View.GONE
+        currentWindow = 1
+    }
+
     private fun showContinuationLayout() {
         layoutInicio.visibility = View.GONE
         layoutContinuacion.visibility = View.VISIBLE
