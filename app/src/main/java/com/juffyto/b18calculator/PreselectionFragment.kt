@@ -14,9 +14,12 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kotlin.math.min
+import android.content.res.ColorStateList
+import android.graphics.Color
 
 class PreselectionFragment : Fragment() {
 
+    private var currentWindow = 1 // 1: Inicio, 2: Continuación, 3: Resultado
     private lateinit var layoutInicio: LinearLayout
     private lateinit var layoutContinuacion: LinearLayout
     private lateinit var layoutResultado: LinearLayout
@@ -74,7 +77,19 @@ class PreselectionFragment : Fragment() {
         setupListeners()
         setupSpinners()
         setupENPValidation()
+
+        // Restaurar el estado si existe
+        savedInstanceState?.let {
+            currentWindow = it.getInt("currentWindow", 1)
+        }
+
         cargarDatosGuardados()
+        restoreCurrentWindow()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("currentWindow", currentWindow)
     }
 
     private fun initializeViews(view: View) {
@@ -288,6 +303,8 @@ class PreselectionFragment : Fragment() {
     private fun showContinuationLayout() {
         layoutInicio.visibility = View.GONE
         layoutContinuacion.visibility = View.VISIBLE
+        layoutResultado.visibility = View.GONE
+        currentWindow = 2
     }
 
     private fun calculateAndShowResult() {
@@ -313,6 +330,7 @@ class PreselectionFragment : Fragment() {
         val puntajeTotal = puntajeENP + puntajeSisfoh + puntajeQuintil + puntajeExtracurricular + puntajePriorizable + puntajeLengua
 
         mostrarResultado(nombre, modalidad, puntajeTotal, puntajeENP, puntajeSisfoh, puntajeQuintil, puntajeExtracurricular, puntajePriorizable, puntajeLengua)
+        currentWindow = 3
     }
 
     private fun calcularPuntajeSisfoh(sisfoh: String, modalidad: String): Int {
@@ -382,6 +400,7 @@ class PreselectionFragment : Fragment() {
 
         buttonPuntajeResultado.text = "Tu puntaje estimado de preselección es: $puntajeFinal puntos"
         buttonPuntajeResultado.setBackgroundColor(obtenerColorPuntaje(puntajeFinal))
+        obtenerColorPuntaje(puntajeFinal)
 
         val desglose = StringBuilder()
         desglose.append("✅ Modalidad: $modalidad\n")
@@ -404,11 +423,13 @@ class PreselectionFragment : Fragment() {
     }
 
     private fun obtenerColorPuntaje(puntaje: Int): Int {
-        return when {
+        val color = when {
             puntaje >= 100 -> ContextCompat.getColor(requireContext(), R.color.green)
             puntaje >= 70 -> ContextCompat.getColor(requireContext(), R.color.yellow)
             else -> ContextCompat.getColor(requireContext(), R.color.red)
         }
+        buttonPuntajeResultado.backgroundTintList = ColorStateList.valueOf(color)
+        return color
     }
 
     private fun generarMensajeAnimo(puntaje: Int): String {
@@ -424,6 +445,34 @@ class PreselectionFragment : Fragment() {
         layoutResultado.visibility = View.GONE
         layoutContinuacion.visibility = View.GONE
         layoutInicio.visibility = View.VISIBLE
+        currentWindow = 1
+    }
+
+    private fun restoreCurrentWindow() {
+        when (currentWindow) {
+            1 -> {
+                layoutInicio.visibility = View.VISIBLE
+                layoutContinuacion.visibility = View.GONE
+                layoutResultado.visibility = View.GONE
+            }
+            2 -> {
+                layoutInicio.visibility = View.GONE
+                layoutContinuacion.visibility = View.VISIBLE
+                layoutResultado.visibility = View.GONE
+            }
+            3 -> {
+                layoutInicio.visibility = View.GONE
+                layoutContinuacion.visibility = View.GONE
+                layoutResultado.visibility = View.VISIBLE
+                // Asegurarse de que los datos de la ventana 3 sean visibles
+                textViewNombreResultado.visibility = View.VISIBLE
+                buttonPuntajeResultado.visibility = View.VISIBLE
+                textViewDesglosePuntaje.visibility = View.VISIBLE
+                textViewFormula.visibility = View.VISIBLE
+                textViewPuntajeMaximo.visibility = View.VISIBLE
+                textViewMensajeAnimo.visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun limpiarFormulario() {
@@ -474,6 +523,18 @@ class PreselectionFragment : Fragment() {
             putString("sisfoh", spinnerSisfoh.text.toString())
             putString("departamento", spinnerDepartamento.text.toString())
             putString("lenguaOriginaria", spinnerLenguaOriginaria.text.toString())
+            putInt("currentWindow", currentWindow)
+
+            // Guardar datos de la ventana 3
+            putString("nombreResultado", textViewNombreResultado.text.toString())
+            putString("puntajeResultado", buttonPuntajeResultado.text.toString())
+            putString("desglosePuntaje", textViewDesglosePuntaje.text.toString())
+            putString("formula", textViewFormula.text.toString())
+            putString("puntajeMaximo", textViewPuntajeMaximo.text.toString())
+            putString("mensajeAnimo", textViewMensajeAnimo.text.toString())
+            putInt("colorPuntaje", buttonPuntajeResultado.currentTextColor)
+            putInt("colorBoton", buttonPuntajeResultado.backgroundTintList?.defaultColor ?: Color.BLACK)
+
             apply()
         }
     }
@@ -489,6 +550,8 @@ class PreselectionFragment : Fragment() {
             updateSisfohOptions()
         }
 
+        val colorBoton = sharedPrefs.getInt("colorBoton", ContextCompat.getColor(requireContext(), R.color.black))
+
         editTextENP.setText(sharedPrefs.getString("enp", ""))
         spinnerSisfoh.setText(sharedPrefs.getString("sisfoh", ""), false)
         spinnerDepartamento.setText(sharedPrefs.getString("departamento", ""), false)
@@ -496,6 +559,19 @@ class PreselectionFragment : Fragment() {
 
         updateLenguaOriginariaVisibility()
         updateCheckboxes()
+        currentWindow = sharedPrefs.getInt("currentWindow", 1)
+
+        // Cargar datos de la ventana 3
+        textViewNombreResultado.text = sharedPrefs.getString("nombreResultado", "")
+        buttonPuntajeResultado.text = sharedPrefs.getString("puntajeResultado", "")
+        textViewDesglosePuntaje.text = sharedPrefs.getString("desglosePuntaje", "")
+        textViewFormula.text = sharedPrefs.getString("formula", "")
+        textViewPuntajeMaximo.text = sharedPrefs.getString("puntajeMaximo", "")
+        textViewMensajeAnimo.text = sharedPrefs.getString("mensajeAnimo", "")
+        buttonPuntajeResultado.setTextColor(sharedPrefs.getInt("colorPuntaje", ContextCompat.getColor(requireContext(), R.color.black)))
+        buttonPuntajeResultado.backgroundTintList = ColorStateList.valueOf(colorBoton)
+
+        restoreCurrentWindow()
     }
 
     private fun showQuintilInfo() {
@@ -517,5 +593,10 @@ class PreselectionFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         guardarDatos()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        restoreCurrentWindow()
     }
 }
