@@ -47,6 +47,7 @@ class SelectionFragment : Fragment() {
     private lateinit var textViewReporteContenido: TextView
 
     private var iesData: List<IES> = listOf()
+    private var shouldShowErrors = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_selection, container, false)
@@ -120,35 +121,39 @@ class SelectionFragment : Fragment() {
     }
 
     private fun setupListeners() {
-        editTextNombre.addTextChangedListener(createTextWatcher { validarCampos() })
+        editTextNombre.addTextChangedListener(createTextWatcher { validateField(editTextNombre) })
+
         spinnerModalidad.setOnItemClickListener { _, _, _, _ ->
             actualizarLimitePuntaje()
-            validarCampos()
+            validateField(spinnerModalidad)
+            validateField(editTextPuntajePreseleccion)
         }
-        editTextPuntajePreseleccion.addTextChangedListener(createTextWatcher {
-            validarPuntajePreseleccion()
-            validarCampos()
-        })
+
+        editTextPuntajePreseleccion.addTextChangedListener(createTextWatcher { validateField(editTextPuntajePreseleccion) })
+
         spinnerRegionIES.setOnItemClickListener { _, _, _, _ ->
             layoutIESFilters.visibility = View.VISIBLE
             updateTipoIESCheckboxes()
             updateGestionIESCheckboxes()
             resetIESSelection()
             updateIESList()
-            validarCampos()
+            validateField(spinnerRegionIES)
         }
+
         spinnerIES.setOnItemClickListener { _, _, _, _ ->
             updateIESDetails()
-            validarCampos()
+            validateField(spinnerIES)
         }
 
         buttonCalcularPuntaje.setOnClickListener {
+            shouldShowErrors = true
             if (validarCampos()) {
                 calcularYMostrarReporte()
             } else {
                 Toast.makeText(context, "Por favor, complete todos los campos requeridos", Toast.LENGTH_SHORT).show()
             }
         }
+
         buttonLimpiarFormulario.setOnClickListener { limpiarFormulario() }
         buttonVolverFormulario.setOnClickListener { mostrarFormulario() }
     }
@@ -158,6 +163,50 @@ class SelectionFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) { afterTextChanged() }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        }
+    }
+
+    private fun validateField(view: View) {
+        if (shouldShowErrors) {
+            when (view) {
+                editTextNombre -> {
+                    if (editTextNombre.text.isNullOrBlank()) {
+                        (editTextNombre.parent.parent as? TextInputLayout)?.error = "El nombre es requerido"
+                    } else {
+                        (editTextNombre.parent.parent as? TextInputLayout)?.error = null
+                    }
+                }
+                spinnerModalidad -> {
+                    if (spinnerModalidad.text.isNullOrBlank()) {
+                        (spinnerModalidad.parent.parent as? TextInputLayout)?.error = "La modalidad es requerida"
+                    } else {
+                        (spinnerModalidad.parent.parent as? TextInputLayout)?.error = null
+                    }
+                }
+                editTextPuntajePreseleccion -> {
+                    val puntaje = editTextPuntajePreseleccion.text.toString().toIntOrNull()
+                    val maxPuntaje = if (spinnerModalidad.text.toString() == "EIB") 180 else 170
+                    if (puntaje == null || puntaje < 0 || puntaje > maxPuntaje) {
+                        (editTextPuntajePreseleccion.parent.parent as? TextInputLayout)?.error = "El puntaje debe estar entre 0 y $maxPuntaje"
+                    } else {
+                        (editTextPuntajePreseleccion.parent.parent as? TextInputLayout)?.error = null
+                    }
+                }
+                spinnerRegionIES -> {
+                    if (spinnerRegionIES.text.isNullOrBlank()) {
+                        (spinnerRegionIES.parent.parent as? TextInputLayout)?.error = "La región IES es requerida"
+                    } else {
+                        (spinnerRegionIES.parent.parent as? TextInputLayout)?.error = null
+                    }
+                }
+                spinnerIES -> {
+                    if (spinnerIES.text.isNullOrBlank()) {
+                        (spinnerIES.parent.parent as? TextInputLayout)?.error = "La IES es requerida"
+                    } else {
+                        (spinnerIES.parent.parent as? TextInputLayout)?.error = null
+                    }
+                }
+            }
         }
     }
 
@@ -266,18 +315,6 @@ class SelectionFragment : Fragment() {
         (editTextPuntajePreseleccion.parent.parent as? TextInputLayout)?.hint = "Puntaje de Preselección (0-$maxPuntaje)"
     }
 
-    private fun validarPuntajePreseleccion() {
-        val puntaje = editTextPuntajePreseleccion.text.toString().toIntOrNull()
-        val modalidad = spinnerModalidad.text.toString()
-        val maxPuntaje = if (modalidad == "EIB") 180 else 170
-
-        if (puntaje == null || puntaje < 0 || puntaje > maxPuntaje) {
-            (editTextPuntajePreseleccion.parent.parent as? TextInputLayout)?.error = "El puntaje debe estar entre 0 y $maxPuntaje"
-        } else {
-            (editTextPuntajePreseleccion.parent.parent as? TextInputLayout)?.error = null
-        }
-    }
-
     private fun getSelectedTiposIES(): List<String> {
         return (0 until checkboxContainerTipoIES.childCount)
             .map { checkboxContainerTipoIES.getChildAt(it) as? CheckBox }
@@ -297,49 +334,18 @@ class SelectionFragment : Fragment() {
     private fun validarCampos(): Boolean {
         var isValid = true
 
-        // Validar Nombre
-        if (editTextNombre.text.isNullOrBlank()) {
-            (editTextNombre.parent.parent as? TextInputLayout)?.error = "El nombre es requerido"
-            isValid = false
-        } else {
-            (editTextNombre.parent.parent as? TextInputLayout)?.error = null
-        }
+        validateField(editTextNombre)
+        validateField(spinnerModalidad)
+        validateField(editTextPuntajePreseleccion)
+        validateField(spinnerRegionIES)
+        validateField(spinnerIES)
 
-        // Validar Modalidad
-        if (spinnerModalidad.text.isNullOrBlank()) {
-            (spinnerModalidad.parent.parent as? TextInputLayout)?.error = "La modalidad es requerida"
-            isValid = false
-        } else {
-            (spinnerModalidad.parent.parent as? TextInputLayout)?.error = null
-        }
+        isValid = isValid && (editTextNombre.parent.parent as? TextInputLayout)?.error == null
+        isValid = isValid && (spinnerModalidad.parent.parent as? TextInputLayout)?.error == null
+        isValid = isValid && (editTextPuntajePreseleccion.parent.parent as? TextInputLayout)?.error == null
+        isValid = isValid && (spinnerRegionIES.parent.parent as? TextInputLayout)?.error == null
+        isValid = isValid && (spinnerIES.parent.parent as? TextInputLayout)?.error == null
 
-        // Validar Puntaje de preselección
-        val puntaje = editTextPuntajePreseleccion.text.toString().toIntOrNull()
-        val maxPuntaje = if (spinnerModalidad.text.toString() == "EIB") 180 else 170
-        if (puntaje == null || puntaje < 0 || puntaje > maxPuntaje) {
-            (editTextPuntajePreseleccion.parent.parent as? TextInputLayout)?.error = "El puntaje debe estar entre 0 y $maxPuntaje"
-            isValid = false
-        } else {
-            (editTextPuntajePreseleccion.parent.parent as? TextInputLayout)?.error = null
-        }
-
-        // Validar Región IES
-        if (spinnerRegionIES.text.isNullOrBlank()) {
-            (spinnerRegionIES.parent.parent as? TextInputLayout)?.error = "La región IES es requerida"
-            isValid = false
-        } else {
-            (spinnerRegionIES.parent.parent as? TextInputLayout)?.error = null
-        }
-
-        // Validar IES
-        if (spinnerIES.text.isNullOrBlank()) {
-            (spinnerIES.parent.parent as? TextInputLayout)?.error = "La IES es requerida"
-            isValid = false
-        } else {
-            (spinnerIES.parent.parent as? TextInputLayout)?.error = null
-        }
-
-        buttonCalcularPuntaje.isEnabled = isValid
         return isValid
     }
 
@@ -413,6 +419,8 @@ class SelectionFragment : Fragment() {
     }
 
     private fun limpiarFormulario() {
+        shouldShowErrors = false
+
         editTextNombre.text?.clear()
         spinnerModalidad.setText("", false)
         editTextPuntajePreseleccion.text?.clear()
@@ -431,7 +439,11 @@ class SelectionFragment : Fragment() {
         (spinnerRegionIES.parent.parent as? TextInputLayout)?.error = null
         (spinnerIES.parent.parent as? TextInputLayout)?.error = null
 
-        validarCampos()
+        // Restablecer el hint del puntaje de preselección
+        (editTextPuntajePreseleccion.parent.parent as? TextInputLayout)?.hint = "Puntaje de Preselección"
+
+        // El botón de calcular puntaje permanece habilitado
+        buttonCalcularPuntaje.isEnabled = true
     }
 
     private fun mostrarFormulario() {
