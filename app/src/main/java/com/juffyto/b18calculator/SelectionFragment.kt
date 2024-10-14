@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -49,6 +50,12 @@ class SelectionFragment : Fragment() {
     private var iesData: List<IES> = listOf()
     private var shouldShowErrors = false
 
+    private lateinit var buttonPuntajeSeleccion: Button
+    private lateinit var textViewDesglosePuntaje: TextView
+    private lateinit var textViewFormula: TextView
+    private lateinit var textViewPuntajeMaximo: TextView
+    private lateinit var textViewMensajeAnimo: TextView
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_selection, container, false)
 
@@ -89,7 +96,12 @@ class SelectionFragment : Fragment() {
         buttonCalcularPuntaje = view.findViewById(R.id.buttonCalcularPuntaje)
         buttonLimpiarFormulario = view.findViewById(R.id.buttonLimpiarFormulario)
         buttonVolverFormulario = view.findViewById(R.id.buttonVolverFormulario)
-        textViewReporteContenido = view.findViewById(R.id.textViewReporteContenido)
+
+        buttonPuntajeSeleccion = view.findViewById(R.id.buttonPuntajeSeleccion)
+        textViewDesglosePuntaje = view.findViewById(R.id.textViewDesglosePuntaje)
+        textViewFormula = view.findViewById(R.id.textViewFormula)
+        textViewPuntajeMaximo = view.findViewById(R.id.textViewPuntajeMaximo)
+        textViewMensajeAnimo = view.findViewById(R.id.textViewMensajeAnimo)
 
         // Ocultar inicialmente
         layoutIESFilters.visibility = View.GONE
@@ -383,38 +395,50 @@ class SelectionFragment : Fragment() {
             // Calcular el puntaje total
             val puntajeTotal = puntajePreseleccion + C + G + S
 
-            // Generar el mensaje basado en el puntaje total
-            val mensaje = when {
-                puntajeTotal > 120 -> "¡Felicidades! Tienes una alta probabilidad de ganar la beca."
-                puntajeTotal > 110 -> "Tienes buenas posibilidades de ganar la beca."
-                puntajeTotal > 100 -> "Hay una probabilidad de que ganes la beca."
-                else -> "Tu puntaje está por debajo del promedio para ganar la beca, pero sigue esforzándote."
-            }
+            // Actualizar el botón de puntaje
+            buttonPuntajeSeleccion.text = "Tu puntaje de selección es: $puntajeTotal puntos"
+            buttonPuntajeSeleccion.setBackgroundColor(obtenerColorPuntaje(puntajeTotal))
 
-            // Generar el reporte
-            val reporte = """
-                Reporte de Selección para $nombre
-                
-                Modalidad: $modalidad
-                IES Seleccionada: ${iesSeleccionada.nombreIES}
-                
-                Desglose de puntaje:
-                PS (Puntaje de Preselección): $puntajePreseleccion
-                C (Puntaje por Posición en Ranking): $C
-                G (Puntaje por Gestión): $G
-                S (Puntaje por Ratio de Selectividad): $S
-                
-                Puntaje Total: $puntajeTotal
-                
-                $mensaje
-                
-                Fórmula utilizada: Puntaje Total = PS + C + G + S
+            // Generar el desglose del puntaje
+            val desglose = """
+                ✅ PS (Puntaje de Preselección): $puntajePreseleccion
+                ✅ C (Puntaje por Posición en Ranking): $C
+                ✅ G (Puntaje por Gestión): $G
+                ✅ S (Puntaje por Ratio de Selectividad): $S
             """.trimIndent()
+            textViewDesglosePuntaje.text = desglose
 
-            textViewReporteContenido.text = reporte
+            // Mostrar la fórmula
+            textViewFormula.text = "Fórmula: Puntaje Total = PS + C + G + S"
+
+            // Mostrar el puntaje máximo
+            val puntajeMaximo = if (modalidad == "EIB") 210 else 200
+            textViewPuntajeMaximo.text = "Puntaje máximo para esta modalidad: $puntajeMaximo puntos"
+
+            // Generar el mensaje de ánimo
+            textViewMensajeAnimo.text = generarMensajeAnimo(puntajeTotal)
+
             mostrarReporte()
         } else {
             Toast.makeText(context, "Por favor, seleccione una IES antes de calcular.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun obtenerColorPuntaje(puntaje: Int): Int {
+        return when {
+            puntaje >= 120 -> ContextCompat.getColor(requireContext(), R.color.green)
+            puntaje >= 110 -> ContextCompat.getColor(requireContext(), R.color.blue)
+            puntaje >= 100 -> ContextCompat.getColor(requireContext(), R.color.orange)
+            else -> ContextCompat.getColor(requireContext(), R.color.red)
+        }
+    }
+
+    private fun generarMensajeAnimo(puntaje: Int): String {
+        return when {
+            puntaje > 120 -> "¡Felicidades! Tienes una alta probabilidad de ganar la beca."
+            puntaje > 110 -> "Tienes buenas posibilidades de ganar la beca."
+            puntaje > 100 -> "Hay una probabilidad de que ganes la beca."
+            else -> "Tu puntaje está por debajo del promedio para ganar la beca, pero sigue esforzándote."
         }
     }
 

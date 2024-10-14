@@ -256,19 +256,64 @@
             android:visibility="gone">
 
             <TextView
-                android:id="@+id/textViewReporteTitulo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Reporte de Selección"
+                android:text="Calculadora de Selección"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:gravity="center"
                 android:layout_marginBottom="16dp"/>
 
             <TextView
-                android:id="@+id/textViewReporteContenido"
+                android:id="@+id/textViewReporteTitulo"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:text="Reporte de Selección"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"/>
+
+            <Button
+                android:id="@+id/buttonPuntajeSeleccion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tu puntaje de selección es: 0 puntos"
+                android:textSize="18sp"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Desglose del puntaje:"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:id="@+id/textViewDesglosePuntaje"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:id="@+id/textViewFormula"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="italic"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:id="@+id/textViewPuntajeMaximo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:id="@+id/textViewMensajeAnimo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="italic"
+                android:layout_marginBottom="16dp"/>
 
             <Button
                 android:id="@+id/buttonVolverFormulario"
