@@ -32,12 +32,25 @@ class SelectionFragment : Fragment() {
     private lateinit var textViewRatioSelectividad: TextView
     private lateinit var textViewPuntajeRatioSelectividad: TextView
     private lateinit var textViewPuntajeTotalIES: TextView
+    private lateinit var checkboxContainerGestionIES: LinearLayout
+    private lateinit var checkboxPrivada: CheckBox
+    private lateinit var checkboxPrivadaAsociativa: CheckBox
+    private lateinit var checkboxPublica: CheckBox
 
     private var iesData: List<IES> = listOf()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_selection, container, false)
 
+        initializeViews(view)
+        loadIESData()
+        setupSpinners()
+        setupListeners()
+
+        return view
+    }
+
+    private fun initializeViews(view: View) {
         editTextNombre = view.findViewById(R.id.editTextNombre)
         spinnerModalidad = view.findViewById(R.id.spinnerModalidad)
         editTextPuntajePreseleccion = view.findViewById(R.id.editTextPuntajePreseleccion)
@@ -57,13 +70,7 @@ class SelectionFragment : Fragment() {
         textViewRatioSelectividad = view.findViewById(R.id.textViewRatioSelectividad)
         textViewPuntajeRatioSelectividad = view.findViewById(R.id.textViewPuntajeRatioSelectividad)
         textViewPuntajeTotalIES = view.findViewById(R.id.textViewPuntajeTotalIES)
-
-        loadIESData()
-        setupSpinners()
-        setupTipoIESCheckboxes()
-        setupListeners()
-
-        return view
+        checkboxContainerGestionIES = view.findViewById(R.id.checkboxContainerGestionIES)
     }
 
     private fun loadIESData() {
@@ -93,17 +100,81 @@ class SelectionFragment : Fragment() {
     private fun setupListeners() {
         spinnerModalidad.setOnItemClickListener { _, _, _, _ -> actualizarLimitePuntaje() }
         editTextPuntajePreseleccion.setOnFocusChangeListener { _, hasFocus -> if (!hasFocus) validarPuntajePreseleccion() }
-        spinnerRegionIES.setOnItemClickListener { _, _, _, _ -> updateIESList() }
+
+        spinnerRegionIES.setOnItemClickListener { _, _, _, _ ->
+            updateTipoIESCheckboxes()
+            updateGestionIESCheckboxes()
+            resetIESSelection()
+            updateIESList()
+        }
+
         spinnerIES.setOnItemClickListener { _, _, _, _ -> updateIESDetails() }
+    }
+
+    private fun updateTipoIESCheckboxes() {
+        val regionSeleccionada = spinnerRegionIES.text.toString()
+        val tiposIESEnRegion = iesData
+            .filter { it.regionIES == regionSeleccionada }
+            .map { it.tipoIES }
+            .distinct()
+            .sorted()
+
+        checkboxContainerTipoIES.removeAllViews()
+        tiposIESEnRegion.forEach { tipo ->
+            val checkbox = CheckBox(context).apply {
+                text = tipo
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                setOnCheckedChangeListener { _, _ ->
+                    resetIESSelection()
+                    updateIESList()
+                }
+            }
+            checkboxContainerTipoIES.addView(checkbox)
+        }
+    }
+
+    private fun updateGestionIESCheckboxes() {
+        val regionSeleccionada = spinnerRegionIES.text.toString()
+        val gestionesIESEnRegion = iesData
+            .filter { it.regionIES == regionSeleccionada }
+            .map { it.gestionIES }
+            .distinct()
+            .sorted()
+
+        checkboxContainerGestionIES.removeAllViews()
+        gestionesIESEnRegion.forEach { gestion ->
+            val checkbox = CheckBox(context).apply {
+                text = gestion
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                setOnCheckedChangeListener { _, _ ->
+                    resetIESSelection()
+                    updateIESList()
+                }
+            }
+            checkboxContainerGestionIES.addView(checkbox)
+        }
+    }
+
+    private fun resetIESSelection() {
+        spinnerIES.setText("", false)
+        layoutIESDetails.visibility = View.GONE
     }
 
     private fun updateIESList() {
         val regionSeleccionada = spinnerRegionIES.text.toString()
         val tiposSeleccionados = getSelectedTiposIES()
+        val gestionesSeleccionadas = getSelectedGestionesIES()
 
         val iesFiltered = iesData.filter { ies ->
             (regionSeleccionada.isEmpty() || ies.regionIES == regionSeleccionada) &&
-                    (tiposSeleccionados.isEmpty() || tiposSeleccionados.contains(ies.tipoIES))
+                    (tiposSeleccionados.isEmpty() || tiposSeleccionados.contains(ies.tipoIES)) &&
+                    (gestionesSeleccionadas.isEmpty() || gestionesSeleccionadas.contains(ies.gestionIES))
         }
 
         val iesNames = iesFiltered.map { it.nombreIES }
@@ -152,25 +223,18 @@ class SelectionFragment : Fragment() {
         }
     }
 
-    private fun setupTipoIESCheckboxes() {
-        val tiposIES = iesData.map { it.tipoIES }.distinct().sorted()
-        tiposIES.forEach { tipo ->
-            val checkbox = CheckBox(context).apply {
-                text = tipo
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                )
-                setOnCheckedChangeListener { _, _ -> updateIESList() }
-            }
-            checkboxContainerTipoIES.addView(checkbox)
-        }
-    }
-
     private fun getSelectedTiposIES(): List<String> {
         return (0 until checkboxContainerTipoIES.childCount)
-            .map { checkboxContainerTipoIES.getChildAt(it) }
-            .filterIsInstance<CheckBox>()
+            .map { checkboxContainerTipoIES.getChildAt(it) as? CheckBox }
+            .filterNotNull()
+            .filter { it.isChecked }
+            .map { it.text.toString() }
+    }
+
+    private fun getSelectedGestionesIES(): List<String> {
+        return (0 until checkboxContainerGestionIES.childCount)
+            .map { checkboxContainerGestionIES.getChildAt(it) as? CheckBox }
+            .filterNotNull()
             .filter { it.isChecked }
             .map { it.text.toString() }
     }
