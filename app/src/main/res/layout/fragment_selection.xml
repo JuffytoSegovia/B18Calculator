@@ -316,12 +316,20 @@
                 android:layout_marginBottom="16dp"/>
 
             <Button
+                android:id="@+id/buttonReiniciarCalculadora"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Reiniciar Calculadora"
+                android:layout_marginTop="8dp"
+                style="@style/Widget.MaterialComponents.Button"/>
+
+            <Button
                 android:id="@+id/buttonVolverFormulario"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Volver al Formulario"
                 android:layout_marginTop="16dp"
-                style="@style/Widget.MaterialComponents.Button"/>
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
         </LinearLayout>
 
     </LinearLayout>

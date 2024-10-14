@@ -1,5 +1,6 @@
 package com.juffyto.b18calculator
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -47,14 +48,17 @@ class SelectionFragment : Fragment() {
     private lateinit var buttonVolverFormulario: Button
     private lateinit var textViewReporteContenido: TextView
 
-    private var iesData: List<IES> = listOf()
-    private var shouldShowErrors = false
-
     private lateinit var buttonPuntajeSeleccion: Button
     private lateinit var textViewDesglosePuntaje: TextView
     private lateinit var textViewFormula: TextView
     private lateinit var textViewPuntajeMaximo: TextView
     private lateinit var textViewMensajeAnimo: TextView
+
+    private lateinit var buttonReiniciarCalculadora: Button
+    private var iesData: List<IES> = listOf()
+    private var shouldShowErrors = false
+    private var currentWindow = 1 // 1 para formulario, 2 para reporte
+    private var selectedIESName: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_selection, container, false)
@@ -63,6 +67,7 @@ class SelectionFragment : Fragment() {
         loadIESData()
         setupSpinners()
         setupListeners()
+        loadSavedState()
 
         return view
     }
@@ -102,6 +107,7 @@ class SelectionFragment : Fragment() {
         textViewFormula = view.findViewById(R.id.textViewFormula)
         textViewPuntajeMaximo = view.findViewById(R.id.textViewPuntajeMaximo)
         textViewMensajeAnimo = view.findViewById(R.id.textViewMensajeAnimo)
+        buttonReiniciarCalculadora = view.findViewById(R.id.buttonReiniciarCalculadora)
 
         // Ocultar inicialmente
         layoutIESFilters.visibility = View.GONE
@@ -154,7 +160,7 @@ class SelectionFragment : Fragment() {
 
         spinnerIES.setOnItemClickListener { _, _, _, _ ->
             updateIESDetails()
-            validateField(spinnerIES)
+            saveState()
         }
 
         buttonCalcularPuntaje.setOnClickListener {
@@ -168,6 +174,19 @@ class SelectionFragment : Fragment() {
 
         buttonLimpiarFormulario.setOnClickListener { limpiarFormulario() }
         buttonVolverFormulario.setOnClickListener { mostrarFormulario() }
+
+        buttonReiniciarCalculadora.setOnClickListener {
+            reiniciarCalculadora()
+        }
+
+        buttonVolverFormulario.setOnClickListener {
+            mostrarFormulario()
+        }
+    }
+
+    private fun reiniciarCalculadora() {
+        limpiarFormulario()
+        mostrarFormulario()
     }
 
     private fun createTextWatcher(afterTextChanged: () -> Unit): TextWatcher {
@@ -305,19 +324,21 @@ class SelectionFragment : Fragment() {
         val selectedIES = iesData.find { it.nombreIES == spinnerIES.text.toString() }
         if (selectedIES != null) {
             layoutIESDetails.visibility = View.VISIBLE
+            selectedIESName = selectedIES.nombreIES
             textViewTipoIESDetail.text = "Tipo IES: ${selectedIES.tipoIES}"
+            textViewGestionIESDetail.text = "Gestión IES: ${selectedIES.gestionIES}"
             textViewRegionIES.text = "Región IES: ${selectedIES.regionIES}"
             textViewSiglasIES.text = "Siglas IES: ${selectedIES.siglasIES}"
             textViewTopIES.text = "Top IES: ${selectedIES.topIES}"
             textViewRankingIES.text = "Ranking IES: ${selectedIES.rankingIES}"
             textViewPuntajeRankingIES.text = "Puntaje Ranking IES: ${selectedIES.puntajeRankingIES}"
-            textViewGestionIESDetail.text = "Gestión IES: ${selectedIES.gestionIES}"
             textViewPuntajeGestionIES.text = "Puntaje Gestión IES: ${selectedIES.puntajeGestionIES}"
             textViewRatioSelectividad.text = "Ratio Selectividad: ${selectedIES.ratioSelectividad}"
             textViewPuntajeRatioSelectividad.text = "Puntaje Ratio Selectividad: ${selectedIES.puntajeRatioSelectividad}"
             textViewPuntajeTotalIES.text = "Puntaje Total de la IES: ${selectedIES.puntosExtraPAO}"
         } else {
             layoutIESDetails.visibility = View.GONE
+            selectedIESName = null
         }
     }
 
@@ -473,10 +494,142 @@ class SelectionFragment : Fragment() {
     private fun mostrarFormulario() {
         layoutFormularioSeleccion.visibility = View.VISIBLE
         layoutReporteSeleccion.visibility = View.GONE
+        currentWindow = 1
+        saveState()
     }
 
     private fun mostrarReporte() {
         layoutFormularioSeleccion.visibility = View.GONE
         layoutReporteSeleccion.visibility = View.VISIBLE
+        currentWindow = 2
+        saveState()
+    }
+
+    private fun saveState() {
+        val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
+        with(sharedPrefs.edit()) {
+            putInt("currentWindow", currentWindow)
+            putString("nombre", editTextNombre.text.toString())
+            putString("modalidad", spinnerModalidad.text.toString())
+            putString("puntajePreseleccion", editTextPuntajePreseleccion.text.toString())
+            putString("regionIES", spinnerRegionIES.text.toString())
+            putString("ies", spinnerIES.text.toString())
+
+            // Guardar estado de los checkboxes de Tipo IES
+            val selectedTiposIES = getSelectedTiposIES()
+            putString("selectedTiposIES", selectedTiposIES.joinToString(","))
+
+            // Guardar estado de los checkboxes de Gestión IES
+            val selectedGestionesIES = getSelectedGestionesIES()
+            putString("selectedGestionesIES", selectedGestionesIES.joinToString(","))
+
+            // Guardar visibilidad de los layouts
+            putBoolean("layoutIESFiltersVisible", layoutIESFilters.visibility == View.VISIBLE)
+            putBoolean("layoutIESSelectionVisible", layoutIESSelection.visibility == View.VISIBLE)
+            putBoolean("layoutIESDetailsVisible", layoutIESDetails.visibility == View.VISIBLE)
+
+            // Guardar el estado del reporte si es necesario
+            if (currentWindow == 2) {
+                putString("desglosePuntaje", textViewDesglosePuntaje.text.toString())
+                putString("formula", textViewFormula.text.toString())
+                putString("puntajeMaximo", textViewPuntajeMaximo.text.toString())
+                putString("mensajeAnimo", textViewMensajeAnimo.text.toString())
+                putString("puntajeSeleccion", buttonPuntajeSeleccion.text.toString())
+            }
+
+            // Guardar el nombre de la IES seleccionada
+            putString("selectedIESName", selectedIESName)
+
+            // Guardar el estado de los detalles de la IES
+            putString("tipoIESDetail", textViewTipoIESDetail.text.toString())
+            putString("gestionIESDetail", textViewGestionIESDetail.text.toString())
+            putString("regionIESDetail", textViewRegionIES.text.toString())
+            putString("siglasIESDetail", textViewSiglasIES.text.toString())
+            putString("topIESDetail", textViewTopIES.text.toString())
+            putString("rankingIESDetail", textViewRankingIES.text.toString())
+            putString("puntajeRankingIESDetail", textViewPuntajeRankingIES.text.toString())
+            putString("puntajeGestionIESDetail", textViewPuntajeGestionIES.text.toString())
+            putString("ratioSelectividadDetail", textViewRatioSelectividad.text.toString())
+            putString("puntajeRatioSelectividadDetail", textViewPuntajeRatioSelectividad.text.toString())
+            putString("puntajeTotalIESDetail", textViewPuntajeTotalIES.text.toString())
+
+            apply()
+        }
+    }
+
+    private fun loadSavedState() {
+        val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
+        currentWindow = sharedPrefs.getInt("currentWindow", 1)
+        editTextNombre.setText(sharedPrefs.getString("nombre", ""))
+        spinnerModalidad.setText(sharedPrefs.getString("modalidad", ""), false)
+        editTextPuntajePreseleccion.setText(sharedPrefs.getString("puntajePreseleccion", ""))
+        spinnerRegionIES.setText(sharedPrefs.getString("regionIES", ""), false)
+        spinnerIES.setText(sharedPrefs.getString("ies", ""), false)
+
+        // Restaurar visibilidad de los layouts
+        layoutIESFilters.visibility = if (sharedPrefs.getBoolean("layoutIESFiltersVisible", false)) View.VISIBLE else View.GONE
+        layoutIESSelection.visibility = if (sharedPrefs.getBoolean("layoutIESSelectionVisible", false)) View.VISIBLE else View.GONE
+        layoutIESDetails.visibility = if (sharedPrefs.getBoolean("layoutIESDetailsVisible", false)) View.VISIBLE else View.GONE
+
+        // Restaurar estado de los checkboxes de Tipo IES y Gestión IES
+        val selectedTiposIES = sharedPrefs.getString("selectedTiposIES", "")?.split(",") ?: listOf()
+        val selectedGestionesIES = sharedPrefs.getString("selectedGestionesIES", "")?.split(",") ?: listOf()
+
+        if (layoutIESFilters.visibility == View.VISIBLE) {
+            updateTipoIESCheckboxes()
+            updateGestionIESCheckboxes()
+            restoreCheckboxState(checkboxContainerTipoIES, selectedTiposIES)
+            restoreCheckboxState(checkboxContainerGestionIES, selectedGestionesIES)
+        }
+
+        if (currentWindow == 2) {
+            textViewDesglosePuntaje.text = sharedPrefs.getString("desglosePuntaje", "")
+            textViewFormula.text = sharedPrefs.getString("formula", "")
+            textViewPuntajeMaximo.text = sharedPrefs.getString("puntajeMaximo", "")
+            textViewMensajeAnimo.text = sharedPrefs.getString("mensajeAnimo", "")
+            buttonPuntajeSeleccion.text = sharedPrefs.getString("puntajeSeleccion", "")
+            mostrarReporte()
+        } else {
+            mostrarFormulario()
+        }
+
+        // Actualizar la lista de IES basada en los filtros restaurados
+        if (layoutIESSelection.visibility == View.VISIBLE) {
+            updateIESList()
+        }
+
+        selectedIESName = sharedPrefs.getString("selectedIESName", null)
+        spinnerIES.setText(selectedIESName, false)
+
+        if (layoutIESDetails.visibility == View.VISIBLE) {
+            textViewTipoIESDetail.text = sharedPrefs.getString("tipoIESDetail", "")
+            textViewGestionIESDetail.text = sharedPrefs.getString("gestionIESDetail", "")
+            textViewRegionIES.text = sharedPrefs.getString("regionIESDetail", "")
+            textViewSiglasIES.text = sharedPrefs.getString("siglasIESDetail", "")
+            textViewTopIES.text = sharedPrefs.getString("topIESDetail", "")
+            textViewRankingIES.text = sharedPrefs.getString("rankingIESDetail", "")
+            textViewPuntajeRankingIES.text = sharedPrefs.getString("puntajeRankingIESDetail", "")
+            textViewPuntajeGestionIES.text = sharedPrefs.getString("puntajeGestionIESDetail", "")
+            textViewRatioSelectividad.text = sharedPrefs.getString("ratioSelectividadDetail", "")
+            textViewPuntajeRatioSelectividad.text = sharedPrefs.getString("puntajeRatioSelectividadDetail", "")
+            textViewPuntajeTotalIES.text = sharedPrefs.getString("puntajeTotalIESDetail", "")
+        }
+
+        // Restaurar detalles de IES si estaban visibles
+        if (layoutIESDetails.visibility == View.VISIBLE) {
+            updateIESDetails()
+        }
+    }
+
+    private fun restoreCheckboxState(container: LinearLayout, selectedItems: List<String>) {
+        for (i in 0 until container.childCount) {
+            val checkbox = container.getChildAt(i) as? CheckBox
+            checkbox?.isChecked = selectedItems.contains(checkbox?.text.toString())
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        saveState()
     }
 }
