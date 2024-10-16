@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.juffyto.b18calculator"
-        minSdk = 33  // Cambiado a 33 para Android 13 (Tiramisu)
+        minSdk = 26  // Cambiado a 24 para Android 7.0 (Nougat)
         targetSdk = 34  // Mantener en 34
         versionCode = 1
         versionName = "1.0"
