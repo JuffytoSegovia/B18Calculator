@@ -160,7 +160,6 @@ class SelectionFragment : Fragment() {
 
         spinnerIES.setOnItemClickListener { _, _, _, _ ->
             updateIESDetails()
-            saveState()
         }
 
         buttonCalcularPuntaje.setOnClickListener {
@@ -336,9 +335,9 @@ class SelectionFragment : Fragment() {
             textViewRatioSelectividad.text = "Ratio Selectividad: ${selectedIES.ratioSelectividad}"
             textViewPuntajeRatioSelectividad.text = "Puntaje Ratio Selectividad: ${selectedIES.puntajeRatioSelectividad}"
             textViewPuntajeTotalIES.text = "Puntaje Total de la IES: ${selectedIES.puntosExtraPAO}"
+            saveState()
         } else {
             layoutIESDetails.visibility = View.GONE
-            selectedIESName = null
         }
     }
 
@@ -523,6 +522,9 @@ class SelectionFragment : Fragment() {
             val selectedGestionesIES = getSelectedGestionesIES()
             putString("selectedGestionesIES", selectedGestionesIES.joinToString(","))
 
+            // Guardar la selección de IES
+            putString("selectedIES", spinnerIES.text.toString())
+
             // Guardar visibilidad de los layouts
             putBoolean("layoutIESFiltersVisible", layoutIESFilters.visibility == View.VISIBLE)
             putBoolean("layoutIESSelectionVisible", layoutIESSelection.visibility == View.VISIBLE)
@@ -552,6 +554,12 @@ class SelectionFragment : Fragment() {
             putString("ratioSelectividadDetail", textViewRatioSelectividad.text.toString())
             putString("puntajeRatioSelectividadDetail", textViewPuntajeRatioSelectividad.text.toString())
             putString("puntajeTotalIESDetail", textViewPuntajeTotalIES.text.toString())
+
+            // Guardar el desglose de la IES seleccionada
+            putString("iesDesglose", textViewDesglosePuntaje.text.toString())
+            putString("iesFormula", textViewFormula.text.toString())
+            putString("iesPuntajeMaximo", textViewPuntajeMaximo.text.toString())
+            putString("iesMensajeAnimo", textViewMensajeAnimo.text.toString())
 
             apply()
         }
@@ -618,6 +626,26 @@ class SelectionFragment : Fragment() {
         // Restaurar detalles de IES si estaban visibles
         if (layoutIESDetails.visibility == View.VISIBLE) {
             updateIESDetails()
+        }
+
+        // Restaurar la selección de IES
+        val selectedIES = sharedPrefs.getString("selectedIES", "")
+        spinnerIES.setText(selectedIES, false)
+
+        if (!selectedIES.isNullOrEmpty()) {
+            // Si hay una IES seleccionada, actualizar los detalles
+            updateIESDetails()
+
+            // Restaurar el desglose
+            textViewDesglosePuntaje.text = sharedPrefs.getString("iesDesglose", "")
+            textViewFormula.text = sharedPrefs.getString("iesFormula", "")
+            textViewPuntajeMaximo.text = sharedPrefs.getString("iesPuntajeMaximo", "")
+            textViewMensajeAnimo.text = sharedPrefs.getString("iesMensajeAnimo", "")
+
+            // Mostrar la ventana de resultado si estaba visible
+            if (currentWindow == 2) {
+                mostrarReporte()
+            }
         }
     }
 
