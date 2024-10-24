@@ -1,6 +1,8 @@
 package com.juffyto.b18calculator
 
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -419,6 +421,10 @@ class SelectionFragment : Fragment() {
             buttonPuntajeSeleccion.text = "Tu puntaje de selección es: $puntajeTotal puntos"
             buttonPuntajeSeleccion.setBackgroundColor(obtenerColorPuntaje(puntajeTotal))
 
+            // Actualizar el botón de puntaje
+            buttonPuntajeSeleccion.text = "Tu puntaje de selección es: $puntajeTotal puntos"
+            obtenerColorPuntaje(puntajeTotal)
+
             // Generar el desglose del puntaje
             val desglose = """
                 ✅ PS (Puntaje de Preselección): $puntajePreseleccion
@@ -445,12 +451,14 @@ class SelectionFragment : Fragment() {
     }
 
     private fun obtenerColorPuntaje(puntaje: Int): Int {
-        return when {
+        val color = when {
             puntaje >= 120 -> ContextCompat.getColor(requireContext(), R.color.green)
             puntaje >= 110 -> ContextCompat.getColor(requireContext(), R.color.blue)
             puntaje >= 100 -> ContextCompat.getColor(requireContext(), R.color.orange)
             else -> ContextCompat.getColor(requireContext(), R.color.red)
         }
+        buttonPuntajeSeleccion.backgroundTintList = ColorStateList.valueOf(color)
+        return color
     }
 
     private fun generarMensajeAnimo(puntaje: Int): String {
@@ -561,6 +569,9 @@ class SelectionFragment : Fragment() {
             putString("iesPuntajeMaximo", textViewPuntajeMaximo.text.toString())
             putString("iesMensajeAnimo", textViewMensajeAnimo.text.toString())
 
+            // Guardar el color del botón de puntaje
+            putInt("buttonPuntajeColor", buttonPuntajeSeleccion.backgroundTintList?.defaultColor ?: Color.BLACK)
+
             apply()
         }
     }
@@ -628,6 +639,10 @@ class SelectionFragment : Fragment() {
             updateIESDetails()
         }
 
+        // Restaurar el color del botón de puntaje
+        val buttonColor = sharedPrefs.getInt("buttonPuntajeColor", ContextCompat.getColor(requireContext(), R.color.blue_primary))
+        buttonPuntajeSeleccion.backgroundTintList = ColorStateList.valueOf(buttonColor)
+
         // Restaurar la selección de IES
         val selectedIES = sharedPrefs.getString("selectedIES", "")
         spinnerIES.setText(selectedIES, false)
@@ -659,5 +674,10 @@ class SelectionFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         saveState()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadSavedState()
     }
 }
