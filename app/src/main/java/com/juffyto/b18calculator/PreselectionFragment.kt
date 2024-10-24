@@ -319,6 +319,7 @@ class PreselectionFragment : Fragment() {
         layoutContinuacion.visibility = View.GONE
         layoutResultado.visibility = View.GONE
         currentWindow = 1
+        guardarDatos() // Añadir esta línea
     }
 
     private fun showContinuationLayout() {
@@ -326,34 +327,87 @@ class PreselectionFragment : Fragment() {
         layoutContinuacion.visibility = View.VISIBLE
         layoutResultado.visibility = View.GONE
         currentWindow = 2
-        guardarDatos() // Guardar datos cuando se muestra la ventana 2
+        guardarDatos()
     }
 
     private fun calculateAndShowResult() {
-        val nombre = editTextNombre.text.toString()
-        val modalidad = spinnerModalidad.text.toString()
-        val enp = editTextENP.text.toString().toInt()
-        val sisfoh = spinnerSisfoh.text.toString()
-        val departamento = spinnerDepartamento.text.toString().split(" - ")[0]
+        try {
+            if (!validateInitialInputs()) {
+                Toast.makeText(context, "Por favor, complete todos los campos correctamente", Toast.LENGTH_SHORT).show()
+                return
+            }
 
-        // Validación para la lengua originaria en modalidad EIB
-        if (modalidad == "EIB" && spinnerLenguaOriginaria.text.isNullOrBlank()) {
-            (spinnerLenguaOriginaria.parent.parent as? TextInputLayout)?.error = "Este campo es obligatorio para la modalidad EIB"
-            return
+            val nombre = editTextNombre.text.toString()
+            val modalidad = spinnerModalidad.text.toString()
+            val enpText = editTextENP.text.toString()
+
+            // Validación adicional del ENP
+            val enp = try {
+                enpText.toInt()
+            } catch (e: NumberFormatException) {
+                Toast.makeText(context, "El puntaje ENP debe ser un número válido", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            val sisfoh = spinnerSisfoh.text.toString()
+            val departamento = spinnerDepartamento.text.toString().split(" - ")[0]
+
+            // Validación para la lengua originaria en modalidad EIB
+            if (modalidad == "EIB" && spinnerLenguaOriginaria.text.isNullOrBlank()) {
+                (spinnerLenguaOriginaria.parent.parent as? TextInputLayout)?.error = "Este campo es obligatorio para la modalidad EIB"
+                return
+            }
+
+            if (!validateFields(nombre, modalidad, enp, sisfoh, departamento)) {
+                return
+            }
+
+            val puntajeENP = enp
+            val puntajeSisfoh = calcularPuntajeSisfoh(sisfoh, modalidad)
+            val puntajeQuintil = calcularPuntajeQuintil(departamento)
+            val puntajeExtracurricular = calcularPuntajeExtracurricular()
+            val puntajePriorizable = calcularPuntajePriorizable()
+            val puntajeLengua = if (modalidad == "EIB") calcularPuntajeLengua() else 0
+
+            val puntajeTotal = puntajeENP + puntajeSisfoh + puntajeQuintil + puntajeExtracurricular + puntajePriorizable + puntajeLengua
+
+            mostrarResultado(nombre, modalidad, puntajeTotal, puntajeENP, puntajeSisfoh, puntajeQuintil, puntajeExtracurricular, puntajePriorizable, puntajeLengua)
+            currentWindow = 3
+            guardarDatos()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(context, "Ocurrió un error al calcular el puntaje", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Agregar este método auxiliar para validación adicional
+    private fun validateFields(nombre: String, modalidad: String, enp: Int, sisfoh: String, departamento: String): Boolean {
+        if (nombre.isBlank()) {
+            Toast.makeText(context, "El nombre es requerido", Toast.LENGTH_SHORT).show()
+            return false
         }
 
-        val puntajeENP = enp
-        val puntajeSisfoh = calcularPuntajeSisfoh(sisfoh, modalidad)
-        val puntajeQuintil = calcularPuntajeQuintil(departamento)
-        val puntajeExtracurricular = calcularPuntajeExtracurricular()
-        val puntajePriorizable = calcularPuntajePriorizable()
-        val puntajeLengua = if (modalidad == "EIB") calcularPuntajeLengua() else 0
+        if (modalidad.isBlank()) {
+            Toast.makeText(context, "La modalidad es requerida", Toast.LENGTH_SHORT).show()
+            return false
+        }
 
-        val puntajeTotal = puntajeENP + puntajeSisfoh + puntajeQuintil + puntajeExtracurricular + puntajePriorizable + puntajeLengua
+        if (enp < 0 || enp > 120) {
+            Toast.makeText(context, "El puntaje ENP debe estar entre 0 y 120", Toast.LENGTH_SHORT).show()
+            return false
+        }
 
-        mostrarResultado(nombre, modalidad, puntajeTotal, puntajeENP, puntajeSisfoh, puntajeQuintil, puntajeExtracurricular, puntajePriorizable, puntajeLengua)
-        currentWindow = 3
-        guardarDatos() // Guardar datos cuando se muestra la ventana 3
+        if (sisfoh.isBlank()) {
+            Toast.makeText(context, "La clasificación SISFOH es requerida", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (departamento.isBlank()) {
+            Toast.makeText(context, "El departamento es requerido", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        return true
     }
 
     private fun calcularPuntajeSisfoh(sisfoh: String, modalidad: String): Int {
@@ -469,6 +523,7 @@ class PreselectionFragment : Fragment() {
         layoutContinuacion.visibility = View.GONE
         layoutInicio.visibility = View.VISIBLE
         currentWindow = 1
+        guardarDatos() // Añadir esta línea
     }
 
     private fun restoreCurrentWindow() {
@@ -532,97 +587,113 @@ class PreselectionFragment : Fragment() {
         updateCheckboxes()
         updateLenguaOriginariaVisibility()
 
-        // Limpiar datos guardados
+        // Al final, en lugar de limpiar todos los datos guardados:
         val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
-        sharedPrefs.edit().clear().apply()
+        with(sharedPrefs.edit()) {
+            sharedPrefs.all.keys
+                .filter { it.startsWith("preselection_") }
+                .forEach { remove(it) }
+            apply()
+        }
     }
 
     private fun guardarDatos() {
+        // Guardar el estado de la ventana actual
+        (activity as? MainActivity)?.saveFragmentState(
+            MainActivity.PRESELECTION_WINDOW_STATE,
+            currentWindow
+        )
+
         val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
         with(sharedPrefs.edit()) {
-            putString("nombre", editTextNombre.text.toString())
-            putString("modalidad", spinnerModalidad.text.toString())
-            putString("enp", editTextENP.text.toString())
-            putString("sisfoh", spinnerSisfoh.text.toString())
-            putString("departamento", spinnerDepartamento.text.toString())
-            putString("lenguaOriginaria", spinnerLenguaOriginaria.text.toString())
-            putInt("currentWindow", currentWindow)
+            putString("preselection_nombre", editTextNombre.text.toString())
+            putString("preselection_modalidad", spinnerModalidad.text.toString())
+            putString("preselection_enp", editTextENP.text.toString())
+            putString("preselection_sisfoh", spinnerSisfoh.text.toString())
+            putString("preselection_departamento", spinnerDepartamento.text.toString())
+            putString("preselection_lenguaOriginaria", spinnerLenguaOriginaria.text.toString())
 
             // Guardar datos de la ventana 3
-            putString("nombreResultado", textViewNombreResultado.text.toString())
-            putString("puntajeResultado", buttonPuntajeResultado.text.toString())
-            putString("desglosePuntaje", textViewDesglosePuntaje.text.toString())
-            putString("formula", textViewFormula.text.toString())
-            putString("puntajeMaximo", textViewPuntajeMaximo.text.toString())
-            putString("mensajeAnimo", textViewMensajeAnimo.text.toString())
-            putInt("colorPuntaje", buttonPuntajeResultado.currentTextColor)
-            putInt("colorBoton", buttonPuntajeResultado.backgroundTintList?.defaultColor ?: Color.BLACK)
+            putString("preselection_nombreResultado", textViewNombreResultado.text.toString())
+            putString("preselection_puntajeResultado", buttonPuntajeResultado.text.toString())
+            putString("preselection_desglosePuntaje", textViewDesglosePuntaje.text.toString())
+            putString("preselection_formula", textViewFormula.text.toString())
+            putString("preselection_puntajeMaximo", textViewPuntajeMaximo.text.toString())
+            putString("preselection_mensajeAnimo", textViewMensajeAnimo.text.toString())
+            putInt("preselection_colorPuntaje", buttonPuntajeResultado.currentTextColor)
+            putInt("preselection_colorBoton", buttonPuntajeResultado.backgroundTintList?.defaultColor ?: Color.BLACK)
 
             // Guardar estado de los checkboxes
-            putBoolean("checkboxConcursoNacional", checkboxConcursoNacional.isChecked)
-            putBoolean("checkboxConcursoParticipacion", checkboxConcursoParticipacion.isChecked)
-            putBoolean("checkboxJuegosNacionales", checkboxJuegosNacionales.isChecked)
-            putBoolean("checkboxJuegosParticipacion", checkboxJuegosParticipacion.isChecked)
-            putBoolean("checkboxDiscapacidad", checkboxDiscapacidad.isChecked)
-            putBoolean("checkboxBomberos", checkboxBomberos.isChecked)
-            putBoolean("checkboxVoluntarios", checkboxVoluntarios.isChecked)
-            putBoolean("checkboxComunidadNativa", checkboxComunidadNativa.isChecked)
-            putBoolean("checkboxMetalesPesados", checkboxMetalesPesados.isChecked)
-            putBoolean("checkboxPoblacionBeneficiaria", checkboxPoblacionBeneficiaria.isChecked)
-            putBoolean("checkboxOrfandad", checkboxOrfandad.isChecked)
-            putBoolean("checkboxDesproteccion", checkboxDesproteccion.isChecked)
-            putBoolean("checkboxAgenteSalud", checkboxAgenteSalud.isChecked)
+            putBoolean("preselection_checkboxConcursoNacional", checkboxConcursoNacional.isChecked)
+            putBoolean("preselection_checkboxConcursoParticipacion", checkboxConcursoParticipacion.isChecked)
+            putBoolean("preselection_checkboxJuegosNacionales", checkboxJuegosNacionales.isChecked)
+            putBoolean("preselection_checkboxJuegosParticipacion", checkboxJuegosParticipacion.isChecked)
+            putBoolean("preselection_checkboxDiscapacidad", checkboxDiscapacidad.isChecked)
+            putBoolean("preselection_checkboxBomberos", checkboxBomberos.isChecked)
+            putBoolean("preselection_checkboxVoluntarios", checkboxVoluntarios.isChecked)
+            putBoolean("preselection_checkboxComunidadNativa", checkboxComunidadNativa.isChecked)
+            putBoolean("preselection_checkboxMetalesPesados", checkboxMetalesPesados.isChecked)
+            putBoolean("preselection_checkboxPoblacionBeneficiaria", checkboxPoblacionBeneficiaria.isChecked)
+            putBoolean("preselection_checkboxOrfandad", checkboxOrfandad.isChecked)
+            putBoolean("preselection_checkboxDesproteccion", checkboxDesproteccion.isChecked)
+            putBoolean("preselection_checkboxAgenteSalud", checkboxAgenteSalud.isChecked)
 
             apply()
         }
     }
 
     private fun cargarDatosGuardados() {
-        val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
-        editTextNombre.setText(sharedPrefs.getString("nombre", ""))
+        // Restaurar el estado de la ventana
+        currentWindow = (activity as? MainActivity)?.getFragmentState(
+            MainActivity.PRESELECTION_WINDOW_STATE
+        ) ?: 1
 
-        val modalidadGuardada = sharedPrefs.getString("modalidad", "")
+        val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
+
+        editTextNombre.setText(sharedPrefs.getString("preselection_nombre", ""))
+
+        val modalidadGuardada = sharedPrefs.getString("preselection_modalidad", "")
         spinnerModalidad.setText(modalidadGuardada, false)
 
         if (modalidadGuardada == "Ordinaria") {
             updateSisfohOptions()
         }
 
-        val colorBoton = sharedPrefs.getInt("colorBoton", ContextCompat.getColor(requireContext(), R.color.black))
+        val colorBoton = sharedPrefs.getInt("preselection_colorBoton", ContextCompat.getColor(requireContext(), R.color.black))
 
-        editTextENP.setText(sharedPrefs.getString("enp", ""))
-        spinnerSisfoh.setText(sharedPrefs.getString("sisfoh", ""), false)
-        spinnerDepartamento.setText(sharedPrefs.getString("departamento", ""), false)
-        spinnerLenguaOriginaria.setText(sharedPrefs.getString("lenguaOriginaria", ""), false)
+        editTextENP.setText(sharedPrefs.getString("preselection_enp", ""))
+        spinnerSisfoh.setText(sharedPrefs.getString("preselection_sisfoh", ""), false)
+        spinnerDepartamento.setText(sharedPrefs.getString("preselection_departamento", ""), false)
+        spinnerLenguaOriginaria.setText(sharedPrefs.getString("preselection_lenguaOriginaria", ""), false)
 
         updateLenguaOriginariaVisibility()
         updateCheckboxes()
-        currentWindow = sharedPrefs.getInt("currentWindow", 1)
 
         // Cargar datos de la ventana 3
-        textViewNombreResultado.text = sharedPrefs.getString("nombreResultado", "")
-        buttonPuntajeResultado.text = sharedPrefs.getString("puntajeResultado", "")
-        textViewDesglosePuntaje.text = sharedPrefs.getString("desglosePuntaje", "")
-        textViewFormula.text = sharedPrefs.getString("formula", "")
-        textViewPuntajeMaximo.text = sharedPrefs.getString("puntajeMaximo", "")
-        textViewMensajeAnimo.text = sharedPrefs.getString("mensajeAnimo", "")
-        buttonPuntajeResultado.setTextColor(sharedPrefs.getInt("colorPuntaje", ContextCompat.getColor(requireContext(), R.color.black)))
+        textViewNombreResultado.text = sharedPrefs.getString("preselection_nombreResultado", "")
+        buttonPuntajeResultado.text = sharedPrefs.getString("preselection_puntajeResultado", "")
+        textViewDesglosePuntaje.text = sharedPrefs.getString("preselection_desglosePuntaje", "")
+        textViewFormula.text = sharedPrefs.getString("preselection_formula", "")
+        textViewPuntajeMaximo.text = sharedPrefs.getString("preselection_puntajeMaximo", "")
+        textViewMensajeAnimo.text = sharedPrefs.getString("preselection_mensajeAnimo", "")
+        buttonPuntajeResultado.setTextColor(sharedPrefs.getInt("preselection_colorPuntaje",
+            ContextCompat.getColor(requireContext(), R.color.black)))
         buttonPuntajeResultado.backgroundTintList = ColorStateList.valueOf(colorBoton)
 
         // Cargar estado de los checkboxes
-        checkboxConcursoNacional.isChecked = sharedPrefs.getBoolean("checkboxConcursoNacional", false)
-        checkboxConcursoParticipacion.isChecked = sharedPrefs.getBoolean("checkboxConcursoParticipacion", false)
-        checkboxJuegosNacionales.isChecked = sharedPrefs.getBoolean("checkboxJuegosNacionales", false)
-        checkboxJuegosParticipacion.isChecked = sharedPrefs.getBoolean("checkboxJuegosParticipacion", false)
-        checkboxDiscapacidad.isChecked = sharedPrefs.getBoolean("checkboxDiscapacidad", false)
-        checkboxBomberos.isChecked = sharedPrefs.getBoolean("checkboxBomberos", false)
-        checkboxVoluntarios.isChecked = sharedPrefs.getBoolean("checkboxVoluntarios", false)
-        checkboxComunidadNativa.isChecked = sharedPrefs.getBoolean("checkboxComunidadNativa", false)
-        checkboxMetalesPesados.isChecked = sharedPrefs.getBoolean("checkboxMetalesPesados", false)
-        checkboxPoblacionBeneficiaria.isChecked = sharedPrefs.getBoolean("checkboxPoblacionBeneficiaria", false)
-        checkboxOrfandad.isChecked = sharedPrefs.getBoolean("checkboxOrfandad", false)
-        checkboxDesproteccion.isChecked = sharedPrefs.getBoolean("checkboxDesproteccion", false)
-        checkboxAgenteSalud.isChecked = sharedPrefs.getBoolean("checkboxAgenteSalud", false)
+        checkboxConcursoNacional.isChecked = sharedPrefs.getBoolean("preselection_checkboxConcursoNacional", false)
+        checkboxConcursoParticipacion.isChecked = sharedPrefs.getBoolean("preselection_checkboxConcursoParticipacion", false)
+        checkboxJuegosNacionales.isChecked = sharedPrefs.getBoolean("preselection_checkboxJuegosNacionales", false)
+        checkboxJuegosParticipacion.isChecked = sharedPrefs.getBoolean("preselection_checkboxJuegosParticipacion", false)
+        checkboxDiscapacidad.isChecked = sharedPrefs.getBoolean("preselection_checkboxDiscapacidad", false)
+        checkboxBomberos.isChecked = sharedPrefs.getBoolean("preselection_checkboxBomberos", false)
+        checkboxVoluntarios.isChecked = sharedPrefs.getBoolean("preselection_checkboxVoluntarios", false)
+        checkboxComunidadNativa.isChecked = sharedPrefs.getBoolean("preselection_checkboxComunidadNativa", false)
+        checkboxMetalesPesados.isChecked = sharedPrefs.getBoolean("preselection_checkboxMetalesPesados", false)
+        checkboxPoblacionBeneficiaria.isChecked = sharedPrefs.getBoolean("preselection_checkboxPoblacionBeneficiaria", false)
+        checkboxOrfandad.isChecked = sharedPrefs.getBoolean("preselection_checkboxOrfandad", false)
+        checkboxDesproteccion.isChecked = sharedPrefs.getBoolean("preselection_checkboxDesproteccion", false)
+        checkboxAgenteSalud.isChecked = sharedPrefs.getBoolean("preselection_checkboxAgenteSalud", false)
 
         updateCheckboxes()
         restoreCurrentWindow()
@@ -651,6 +722,6 @@ class PreselectionFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        restoreCurrentWindow()
+        cargarDatosGuardados() // Cambiado de restoreCurrentWindow() a cargarDatosGuardados()
     }
 }

@@ -1,5 +1,6 @@
 package com.juffyto.b18calculator
 
+import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -65,13 +66,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
-        if (currentFragment is PreselectionFragment) {
-            if (currentFragment.onBackPressed()) {
-                return
-            }
-        }
-
         when {
+            currentFragment is PreselectionFragment && currentFragment.onBackPressed() -> {
+                // Manejado por el fragmento
+            }
+            currentFragment is SelectionFragment && currentFragment.onBackPressed() -> {
+                // Manejado por el fragmento
+            }
             bottomNav.selectedItemId != R.id.navigation_home -> {
                 bottomNav.selectedItemId = R.id.navigation_home
             }
@@ -79,6 +80,8 @@ class MainActivity : AppCompatActivity() {
                 showExitDialog()
             }
         }
+        // Agregar esta línea
+        super.onBackPressed()
     }
 
     private fun showExitDialog() {
@@ -88,5 +91,25 @@ class MainActivity : AppCompatActivity() {
             .setPositiveButton("Sí") { _, _ -> finish() }
             .setNegativeButton("No", null)
             .show()
+    }
+
+    companion object {
+        const val PRESELECTION_WINDOW_STATE = "preselection_window_state"
+        const val SELECTION_WINDOW_STATE = "selection_window_state"
+    }
+
+    // Cambiar de private a internal o public
+    internal fun saveFragmentState(fragmentType: String, windowState: Int) {
+        val sharedPrefs = getPreferences(Context.MODE_PRIVATE)
+        sharedPrefs.edit().apply {
+            putInt(fragmentType, windowState)
+            apply()
+        }
+    }
+
+    // Cambiar de private a internal o public
+    internal fun getFragmentState(fragmentType: String): Int {
+        val sharedPrefs = getPreferences(Context.MODE_PRIVATE)
+        return sharedPrefs.getInt(fragmentType, 1)
     }
 }
