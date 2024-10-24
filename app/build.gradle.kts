@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.juffyto.b18calculator"
-        minSdk = 26  // Cambiado a 24 para Android 7.0 (Nougat)
+        minSdk = 26  // Cambiado a 26 para Android 8.0 Oreo
         targetSdk = 34  // Mantener en 34
         versionCode = 1
         versionName = "1.0"
@@ -49,6 +49,6 @@ dependencies {
 
     //Nueva dependencia
     implementation(libs.circleimageview)
-    implementation("com.google.code.gson:gson:2.8.9")
+    implementation("com.google.code.gson:gson:2.10.1")
 
 }
