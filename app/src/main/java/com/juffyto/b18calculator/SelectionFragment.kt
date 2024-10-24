@@ -1,7 +1,6 @@
 package com.juffyto.b18calculator
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -19,8 +18,6 @@ import com.google.gson.reflect.TypeToken
 
 class SelectionFragment : Fragment() {
 
-    private lateinit var textViewRecomendaciones: TextView
-    private lateinit var textViewReporteTitulo: TextView
     private lateinit var editTextNombre: TextInputEditText
     private lateinit var spinnerModalidad: AutoCompleteTextView
     private lateinit var editTextPuntajePreseleccion: TextInputEditText
@@ -49,6 +46,7 @@ class SelectionFragment : Fragment() {
     private lateinit var buttonCalcularPuntaje: Button
     private lateinit var buttonLimpiarFormulario: Button
     private lateinit var buttonVolverFormulario: Button
+    private lateinit var textViewReporteContenido: TextView
 
     private lateinit var buttonPuntajeSeleccion: Button
     private lateinit var textViewDesglosePuntaje: TextView
@@ -70,12 +68,11 @@ class SelectionFragment : Fragment() {
         setupSpinners()
         setupListeners()
         loadSavedState()
+
         return view
     }
 
     private fun initializeViews(view: View) {
-        textViewRecomendaciones = view.findViewById(R.id.textViewRecomendaciones)
-        textViewReporteTitulo = view.findViewById(R.id.textViewReporteTitulo)
         editTextNombre = view.findViewById(R.id.editTextNombre)
         spinnerModalidad = view.findViewById(R.id.spinnerModalidad)
         editTextPuntajePreseleccion = view.findViewById(R.id.editTextPuntajePreseleccion)
@@ -180,6 +177,10 @@ class SelectionFragment : Fragment() {
 
         buttonReiniciarCalculadora.setOnClickListener {
             reiniciarCalculadora()
+        }
+
+        buttonVolverFormulario.setOnClickListener {
+            mostrarFormulario()
         }
     }
 
@@ -312,37 +313,32 @@ class SelectionFragment : Fragment() {
         }
 
         val iesNames = iesFiltered.map { it.nombreIES }
-        val currentSelection = spinnerIES.text.toString() // Guardamos la selección actual
-
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, iesNames)
         spinnerIES.setAdapter(adapter)
-
-        // Si la selección actual está en la lista filtrada, la mantenemos
-        if (iesNames.contains(currentSelection)) {
-            spinnerIES.setText(currentSelection, false)
-            updateIESDetails()
-        }
+        spinnerIES.setText("", false)  // Limpiar la selección actual
 
         layoutIESSelection.visibility = View.VISIBLE
     }
 
     private fun updateIESDetails() {
         val selectedIES = iesData.find { it.nombreIES == spinnerIES.text.toString() }
-        layoutIESDetails.visibility = if (selectedIES != null) View.VISIBLE else View.GONE
-        selectedIESName = selectedIES?.nombreIES
-
-        selectedIES?.let {
-            textViewTipoIESDetail.text = "Tipo IES: ${it.tipoIES}"
-            textViewGestionIESDetail.text = "Gestión IES: ${it.gestionIES}"
-            textViewRegionIES.text = "Región IES: ${it.regionIES}"
-            textViewSiglasIES.text = "Siglas IES: ${it.siglasIES}"
-            textViewTopIES.text = "Top IES: ${it.topIES}"
-            textViewRankingIES.text = "Ranking IES: ${it.rankingIES}"
-            textViewPuntajeRankingIES.text = "Puntaje Ranking IES: ${it.puntajeRankingIES}"
-            textViewPuntajeGestionIES.text = "Puntaje Gestión IES: ${it.puntajeGestionIES}"
-            textViewRatioSelectividad.text = "Ratio Selectividad: ${it.ratioSelectividad}"
-            textViewPuntajeRatioSelectividad.text = "Puntaje Ratio Selectividad: ${it.puntajeRatioSelectividad}"
-            textViewPuntajeTotalIES.text = "Puntaje Total de la IES: ${it.puntosExtraPAO}"
+        if (selectedIES != null) {
+            layoutIESDetails.visibility = View.VISIBLE
+            selectedIESName = selectedIES.nombreIES
+            textViewTipoIESDetail.text = "Tipo IES: ${selectedIES.tipoIES}"
+            textViewGestionIESDetail.text = "Gestión IES: ${selectedIES.gestionIES}"
+            textViewRegionIES.text = "Región IES: ${selectedIES.regionIES}"
+            textViewSiglasIES.text = "Siglas IES: ${selectedIES.siglasIES}"
+            textViewTopIES.text = "Top IES: ${selectedIES.topIES}"
+            textViewRankingIES.text = "Ranking IES: ${selectedIES.rankingIES}"
+            textViewPuntajeRankingIES.text = "Puntaje Ranking IES: ${selectedIES.puntajeRankingIES}"
+            textViewPuntajeGestionIES.text = "Puntaje Gestión IES: ${selectedIES.puntajeGestionIES}"
+            textViewRatioSelectividad.text = "Ratio Selectividad: ${selectedIES.ratioSelectividad}"
+            textViewPuntajeRatioSelectividad.text = "Puntaje Ratio Selectividad: ${selectedIES.puntajeRatioSelectividad}"
+            textViewPuntajeTotalIES.text = "Puntaje Total de la IES: ${selectedIES.puntosExtraPAO}"
+        } else {
+            layoutIESDetails.visibility = View.GONE
+            selectedIESName = null
         }
     }
 
@@ -422,11 +418,10 @@ class SelectionFragment : Fragment() {
 
             // Actualizar el botón de puntaje
             buttonPuntajeSeleccion.text = "Tu puntaje de selección es: $puntajeTotal puntos"
-            obtenerColorPuntaje(puntajeTotal) // Usar el método modificado
+            buttonPuntajeSeleccion.setBackgroundColor(obtenerColorPuntaje(puntajeTotal))
 
             // Generar el desglose del puntaje
             val desglose = """
-                ✅ Modalidad: $modalidad
                 ✅ PS (Puntaje de Preselección): $puntajePreseleccion
                 ✅ C (Puntaje por Posición en Ranking): $C
                 ✅ G (Puntaje por Gestión): $G
@@ -443,7 +438,6 @@ class SelectionFragment : Fragment() {
 
             // Generar el mensaje de ánimo
             textViewMensajeAnimo.text = generarMensajeAnimo(puntajeTotal)
-            textViewRecomendaciones.text = generarRecomendaciones(C, G, S, iesSeleccionada)
 
             mostrarReporte()
         } else {
@@ -451,113 +445,13 @@ class SelectionFragment : Fragment() {
         }
     }
 
-    private fun generarRecomendaciones(puntajeRanking: Int, puntajeGestion: Int, puntajeSelectividad: Int, iesActual: IES): String {
-        val recomendaciones = StringBuilder()
-        val puntajeActual = puntajeRanking + puntajeGestion + puntajeSelectividad
-        val regionActual = iesActual.regionIES
-
-        recomendaciones.append("\n📈 Recomendaciones para mejorar tu puntaje actual ($puntajeActual puntos):\n")
-
-        // Obtener todas las IES que dan mejor puntaje
-        val mejoresIES = iesData.map { ies ->
-            val puntajeC = when (ies.topIES) {
-                "Top 1 al 6" -> 10
-                "Top 7 al 12" -> 7
-                "Top 13 al 19" -> 5
-                else -> 0
-            }
-
-            val puntajeG = when (ies.gestionIES) {
-                "PÚBLICA" -> 10
-                "PRIVADA", "PRIVADA ASOCIATIVA" -> 5
-                else -> 0
-            }
-
-            val puntajeS = when (ies.ratioSelectividad) {
-                "QUINTIL 5" -> 10
-                "QUINTIL 4" -> 7
-                "QUINTIL 3" -> 5
-                "QUINTIL 2" -> 2
-                else -> 0
-            }
-
-            val puntajeTotal = puntajeC + puntajeG + puntajeS
-            Triple(ies, puntajeTotal, ies.regionIES == regionActual)
-        }.filter { (_, puntaje, _) ->
-            puntaje > puntajeActual
-        }.sortedByDescending { it.second }
-
-        if (mejoresIES.isEmpty()) {
-            recomendaciones.append("\n💫 ¡Excelente elección!")
-            recomendaciones.append("\nTu IES actual te otorga uno de los mejores puntajes posibles ($puntajeActual puntos).")
-        } else {
-            // Agrupar por tipo de IES
-            val iesPorTipo = mejoresIES.groupBy { it.first.tipoIES }
-
-            // Primero mostrar las IES de la misma región
-            recomendaciones.append("\n🌟 IES en tu región (${regionActual}):")
-            iesPorTipo.forEach { (tipo, listaIES) ->
-                val iesEnRegion = listaIES.filter { it.third }
-                if (iesEnRegion.isNotEmpty()) {
-                    recomendaciones.append("\n\n📚 $tipo:")
-                    iesEnRegion.forEach { (ies, puntaje, _) ->
-                        mostrarDetallesIES(recomendaciones, ies, puntaje, puntajeActual)
-                    }
-                }
-            }
-
-            // Luego mostrar las IES de otras regiones
-            recomendaciones.append("\n\n🌎 IES en otras regiones:")
-            iesPorTipo.forEach { (tipo, listaIES) ->
-                val iesOtrasRegiones = listaIES.filter { !it.third }
-                if (iesOtrasRegiones.isNotEmpty()) {
-                    recomendaciones.append("\n\n📚 $tipo:")
-                    iesOtrasRegiones.forEach { (ies, puntaje, _) ->
-                        mostrarDetallesIES(recomendaciones, ies, puntaje, puntajeActual)
-                    }
-                }
-            }
-
-            // Agregar resumen
-            val mejoraPosible = mejoresIES.maxOf { it.second } - puntajeActual
-
-            recomendaciones.append("\n\n💡 Resumen:")
-            recomendaciones.append("\n• Podrías mejorar tu puntaje hasta en $mejoraPosible puntos")
-            recomendaciones.append("\n• Las IES están agrupadas por:")
-            recomendaciones.append("\n  - Tipo de institución")
-            recomendaciones.append("\n  - Ubicación (tu región y otras regiones)")
-            recomendaciones.append("\n• Considera también:")
-            recomendaciones.append("\n  - Disponibilidad de tu carrera de interés")
-            recomendaciones.append("\n  - Calidad educativa")
-            recomendaciones.append("\n  - Costos y accesibilidad")
-        }
-
-        return recomendaciones.toString()
-    }
-
-    private fun mostrarDetallesIES(sb: StringBuilder, ies: IES, puntajeTotal: Int, puntajeActual: Int) {
-        val diferencia = puntajeTotal - puntajeActual
-        val detalles = mutableListOf<String>()
-
-        if (ies.topIES.startsWith("Top")) detalles.add(ies.topIES)
-        detalles.add(ies.gestionIES)
-        detalles.add("Selectividad: ${ies.ratioSelectividad}")
-
-        sb.append("\n\n➤ ${ies.nombreIES}")
-        sb.append("\n  📍 ${ies.regionIES}")
-        sb.append("\n  📋 ${detalles.joinToString(" • ")}")
-        sb.append("\n  💯 Puntaje total: $puntajeTotal (+$diferencia pts)")
-    }
-
     private fun obtenerColorPuntaje(puntaje: Int): Int {
-        val color = when {
+        return when {
             puntaje >= 120 -> ContextCompat.getColor(requireContext(), R.color.green)
             puntaje >= 110 -> ContextCompat.getColor(requireContext(), R.color.blue)
             puntaje >= 100 -> ContextCompat.getColor(requireContext(), R.color.orange)
             else -> ContextCompat.getColor(requireContext(), R.color.red)
         }
-        buttonPuntajeSeleccion.backgroundTintList = ColorStateList.valueOf(color)
-        return color
     }
 
     private fun generarMensajeAnimo(puntaje: Int): String {
@@ -595,15 +489,6 @@ class SelectionFragment : Fragment() {
 
         // El botón de calcular puntaje permanece habilitado
         buttonCalcularPuntaje.isEnabled = true
-
-        // Limpiar solo las preferencias relacionadas con la selección
-        val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
-        with(sharedPrefs.edit()) {
-            sharedPrefs.all.keys
-                .filter { it.startsWith("selection_") }
-                .forEach { remove(it) }
-            apply()
-        }
     }
 
     private fun mostrarFormulario() {
@@ -616,142 +501,123 @@ class SelectionFragment : Fragment() {
     private fun mostrarReporte() {
         layoutFormularioSeleccion.visibility = View.GONE
         layoutReporteSeleccion.visibility = View.VISIBLE
-        textViewReporteTitulo.text = "Reporte de Selección para ${editTextNombre.text}"
-        // Aplicar estilos consistentes
-        textViewDesglosePuntaje.setPadding(0, 16, 0, 16)
-        textViewPuntajeMaximo.setPadding(0, 16, 0, 16)
-        textViewMensajeAnimo.setPadding(0, 16, 0, 16)
-        textViewRecomendaciones.setPadding(0, 16, 0, 16)
         currentWindow = 2
         saveState()
     }
 
     private fun saveState() {
-        // Guardar el estado de la ventana actual
-        (activity as? MainActivity)?.saveFragmentState(
-            MainActivity.SELECTION_WINDOW_STATE,
-            currentWindow
-        )
-
         val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
         with(sharedPrefs.edit()) {
-            putInt("selection_currentWindow", currentWindow)
-            putString("selection_nombre", editTextNombre.text.toString())
-            putString("selection_modalidad", spinnerModalidad.text.toString())
-            putString("selection_puntajePreseleccion", editTextPuntajePreseleccion.text.toString())
-            putString("selection_regionIES", spinnerRegionIES.text.toString())
-            putString("selection_ies", spinnerIES.text.toString())
+            putInt("currentWindow", currentWindow)
+            putString("nombre", editTextNombre.text.toString())
+            putString("modalidad", spinnerModalidad.text.toString())
+            putString("puntajePreseleccion", editTextPuntajePreseleccion.text.toString())
+            putString("regionIES", spinnerRegionIES.text.toString())
+            putString("ies", spinnerIES.text.toString())
 
             // Guardar estado de los checkboxes de Tipo IES
             val selectedTiposIES = getSelectedTiposIES()
-            putString("selection_selectedTiposIES", selectedTiposIES.joinToString(","))
+            putString("selectedTiposIES", selectedTiposIES.joinToString(","))
 
             // Guardar estado de los checkboxes de Gestión IES
             val selectedGestionesIES = getSelectedGestionesIES()
-            putString("selection_selectedGestionesIES", selectedGestionesIES.joinToString(","))
+            putString("selectedGestionesIES", selectedGestionesIES.joinToString(","))
 
             // Guardar visibilidad de los layouts
-            putBoolean("selection_layoutIESFiltersVisible", layoutIESFilters.visibility == View.VISIBLE)
-            putBoolean("selection_layoutIESSelectionVisible", layoutIESSelection.visibility == View.VISIBLE)
-            putBoolean("selection_layoutIESDetailsVisible", layoutIESDetails.visibility == View.VISIBLE)
+            putBoolean("layoutIESFiltersVisible", layoutIESFilters.visibility == View.VISIBLE)
+            putBoolean("layoutIESSelectionVisible", layoutIESSelection.visibility == View.VISIBLE)
+            putBoolean("layoutIESDetailsVisible", layoutIESDetails.visibility == View.VISIBLE)
 
             // Guardar el estado del reporte si es necesario
             if (currentWindow == 2) {
-                putString("selection_reportTitle", textViewReporteTitulo.text.toString())
-                putString("selection_desglosePuntaje", textViewDesglosePuntaje.text.toString())
-                putString("selection_formula", textViewFormula.text.toString())
-                putString("selection_puntajeMaximo", textViewPuntajeMaximo.text.toString())
-                putString("selection_mensajeAnimo", textViewMensajeAnimo.text.toString())
-                putString("selection_puntajeSeleccion", buttonPuntajeSeleccion.text.toString())
-                putString("selection_recomendaciones", textViewRecomendaciones.text.toString())
-
-                // Guardar el color del botón
-                putInt("selection_colorBotonSeleccion", buttonPuntajeSeleccion.backgroundTintList?.defaultColor
-                    ?: ContextCompat.getColor(requireContext(), R.color.blue_primary))
+                putString("desglosePuntaje", textViewDesglosePuntaje.text.toString())
+                putString("formula", textViewFormula.text.toString())
+                putString("puntajeMaximo", textViewPuntajeMaximo.text.toString())
+                putString("mensajeAnimo", textViewMensajeAnimo.text.toString())
+                putString("puntajeSeleccion", buttonPuntajeSeleccion.text.toString())
             }
 
-            // Guardar la IES seleccionada
-            putString("selection_selectedIESName", spinnerIES.text.toString())
+            // Guardar el nombre de la IES seleccionada
+            putString("selectedIESName", selectedIESName)
 
             // Guardar el estado de los detalles de la IES
-            putString("selection_tipoIESDetail", textViewTipoIESDetail.text.toString())
-            putString("selection_gestionIESDetail", textViewGestionIESDetail.text.toString())
-            putString("selection_regionIESDetail", textViewRegionIES.text.toString())
-            putString("selection_siglasIESDetail", textViewSiglasIES.text.toString())
-            putString("selection_topIESDetail", textViewTopIES.text.toString())
-            putString("selection_rankingIESDetail", textViewRankingIES.text.toString())
-            putString("selection_puntajeRankingIESDetail", textViewPuntajeRankingIES.text.toString())
-            putString("selection_puntajeGestionIESDetail", textViewPuntajeGestionIES.text.toString())
-            putString("selection_ratioSelectividadDetail", textViewRatioSelectividad.text.toString())
-            putString("selection_puntajeRatioSelectividadDetail", textViewPuntajeRatioSelectividad.text.toString())
-            putString("selection_puntajeTotalIESDetail", textViewPuntajeTotalIES.text.toString())
+            putString("tipoIESDetail", textViewTipoIESDetail.text.toString())
+            putString("gestionIESDetail", textViewGestionIESDetail.text.toString())
+            putString("regionIESDetail", textViewRegionIES.text.toString())
+            putString("siglasIESDetail", textViewSiglasIES.text.toString())
+            putString("topIESDetail", textViewTopIES.text.toString())
+            putString("rankingIESDetail", textViewRankingIES.text.toString())
+            putString("puntajeRankingIESDetail", textViewPuntajeRankingIES.text.toString())
+            putString("puntajeGestionIESDetail", textViewPuntajeGestionIES.text.toString())
+            putString("ratioSelectividadDetail", textViewRatioSelectividad.text.toString())
+            putString("puntajeRatioSelectividadDetail", textViewPuntajeRatioSelectividad.text.toString())
+            putString("puntajeTotalIESDetail", textViewPuntajeTotalIES.text.toString())
 
             apply()
         }
     }
 
     private fun loadSavedState() {
-        // Restaurar el estado de la ventana
-        currentWindow = (activity as? MainActivity)?.getFragmentState(
-            MainActivity.SELECTION_WINDOW_STATE
-        ) ?: 1
-
         val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
+        currentWindow = sharedPrefs.getInt("currentWindow", 1)
+        editTextNombre.setText(sharedPrefs.getString("nombre", ""))
+        spinnerModalidad.setText(sharedPrefs.getString("modalidad", ""), false)
+        editTextPuntajePreseleccion.setText(sharedPrefs.getString("puntajePreseleccion", ""))
+        spinnerRegionIES.setText(sharedPrefs.getString("regionIES", ""), false)
+        spinnerIES.setText(sharedPrefs.getString("ies", ""), false)
 
-        // Cargar datos básicos
-        editTextNombre.setText(sharedPrefs.getString("selection_nombre", ""))
-        spinnerModalidad.setText(sharedPrefs.getString("selection_modalidad", ""), false)
-        editTextPuntajePreseleccion.setText(sharedPrefs.getString("selection_puntajePreseleccion", ""))
+        // Restaurar visibilidad de los layouts
+        layoutIESFilters.visibility = if (sharedPrefs.getBoolean("layoutIESFiltersVisible", false)) View.VISIBLE else View.GONE
+        layoutIESSelection.visibility = if (sharedPrefs.getBoolean("layoutIESSelectionVisible", false)) View.VISIBLE else View.GONE
+        layoutIESDetails.visibility = if (sharedPrefs.getBoolean("layoutIESDetailsVisible", false)) View.VISIBLE else View.GONE
 
-        // Cargar región y actualizar filtros
-        val savedRegion = sharedPrefs.getString("selection_regionIES", "")
-        spinnerRegionIES.setText(savedRegion, false)
+        // Restaurar estado de los checkboxes de Tipo IES y Gestión IES
+        val selectedTiposIES = sharedPrefs.getString("selectedTiposIES", "")?.split(",") ?: listOf()
+        val selectedGestionesIES = sharedPrefs.getString("selectedGestionesIES", "")?.split(",") ?: listOf()
 
-        if (savedRegion?.isNotEmpty() == true) {
-            layoutIESFilters.visibility = View.VISIBLE
-
-            // Restaurar checkboxes
-            val selectedTiposIES = sharedPrefs.getString("selection_selectedTiposIES", "")?.split(",") ?: listOf()
-            val selectedGestionesIES = sharedPrefs.getString("selection_selectedGestionesIES", "")?.split(",") ?: listOf()
-
+        if (layoutIESFilters.visibility == View.VISIBLE) {
             updateTipoIESCheckboxes()
             updateGestionIESCheckboxes()
-
-            // Restaurar estado de los checkboxes
             restoreCheckboxState(checkboxContainerTipoIES, selectedTiposIES)
             restoreCheckboxState(checkboxContainerGestionIES, selectedGestionesIES)
-
-            // Actualizar lista de IES
-            updateIESList()
-
-            // Restaurar IES seleccionada después de que la lista se haya actualizado
-            val savedIES = sharedPrefs.getString("selection_selectedIESName", "")
-            if (!savedIES.isNullOrEmpty()) {
-                spinnerIES.setText(savedIES, false)
-                updateIESDetails()
-                layoutIESDetails.visibility = View.VISIBLE
-            }
         }
 
-        // Restaurar estado de la ventana
         if (currentWindow == 2) {
-            // Restaurar datos del reporte
-            textViewReporteTitulo.text = sharedPrefs.getString("selection_reportTitle", "")
-            textViewDesglosePuntaje.text = sharedPrefs.getString("selection_desglosePuntaje", "")
-            textViewFormula.text = sharedPrefs.getString("selection_formula", "")
-            textViewPuntajeMaximo.text = sharedPrefs.getString("selection_puntajeMaximo", "")
-            textViewMensajeAnimo.text = sharedPrefs.getString("selection_mensajeAnimo", "")
-            textViewRecomendaciones.text = sharedPrefs.getString("selection_recomendaciones", "")
-            buttonPuntajeSeleccion.text = sharedPrefs.getString("selection_puntajeSeleccion", "")
-
-            // Restaurar el color del botón
-            val colorGuardado = sharedPrefs.getInt("selection_colorBotonSeleccion",
-                ContextCompat.getColor(requireContext(), R.color.blue_primary))
-            buttonPuntajeSeleccion.backgroundTintList = ColorStateList.valueOf(colorGuardado)
-
+            textViewDesglosePuntaje.text = sharedPrefs.getString("desglosePuntaje", "")
+            textViewFormula.text = sharedPrefs.getString("formula", "")
+            textViewPuntajeMaximo.text = sharedPrefs.getString("puntajeMaximo", "")
+            textViewMensajeAnimo.text = sharedPrefs.getString("mensajeAnimo", "")
+            buttonPuntajeSeleccion.text = sharedPrefs.getString("puntajeSeleccion", "")
             mostrarReporte()
         } else {
             mostrarFormulario()
+        }
+
+        // Actualizar la lista de IES basada en los filtros restaurados
+        if (layoutIESSelection.visibility == View.VISIBLE) {
+            updateIESList()
+        }
+
+        selectedIESName = sharedPrefs.getString("selectedIESName", null)
+        spinnerIES.setText(selectedIESName, false)
+
+        if (layoutIESDetails.visibility == View.VISIBLE) {
+            textViewTipoIESDetail.text = sharedPrefs.getString("tipoIESDetail", "")
+            textViewGestionIESDetail.text = sharedPrefs.getString("gestionIESDetail", "")
+            textViewRegionIES.text = sharedPrefs.getString("regionIESDetail", "")
+            textViewSiglasIES.text = sharedPrefs.getString("siglasIESDetail", "")
+            textViewTopIES.text = sharedPrefs.getString("topIESDetail", "")
+            textViewRankingIES.text = sharedPrefs.getString("rankingIESDetail", "")
+            textViewPuntajeRankingIES.text = sharedPrefs.getString("puntajeRankingIESDetail", "")
+            textViewPuntajeGestionIES.text = sharedPrefs.getString("puntajeGestionIESDetail", "")
+            textViewRatioSelectividad.text = sharedPrefs.getString("ratioSelectividadDetail", "")
+            textViewPuntajeRatioSelectividad.text = sharedPrefs.getString("puntajeRatioSelectividadDetail", "")
+            textViewPuntajeTotalIES.text = sharedPrefs.getString("puntajeTotalIESDetail", "")
+        }
+
+        // Restaurar detalles de IES si estaban visibles
+        if (layoutIESDetails.visibility == View.VISIBLE) {
+            updateIESDetails()
         }
     }
 
@@ -765,15 +631,5 @@ class SelectionFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         saveState()
-    }
-
-    fun onBackPressed(): Boolean {
-        return when (currentWindow) {
-            2 -> {
-                mostrarFormulario()
-                true
-            }
-            else -> false
-        }
     }
 }
