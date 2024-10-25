@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView
+    android:id="@+id/scrollViewPreselection"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="?android:attr/windowBackground">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,13 +19,6 @@
             android:textStyle="bold"
             android:gravity="center"
             android:layout_marginBottom="16dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/calculadora_preseleccion_description"
-            android:textColor="@color/text_color_secondary"
-            android:layout_marginBottom="24dp"/>
 
         <!-- Ventana 1: Inicio -->
         <LinearLayout
@@ -157,7 +150,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Participación en Actividades Extracurriculares - Máximo 10 puntos:"
+                android:text="@string/participaci_n_en_actividades_extracurriculares_m_ximo_10_puntos"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"/>
@@ -166,30 +159,30 @@
                 android:id="@+id/checkboxConcursoNacional"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="(CE) Concurso Escolar Nacional (1°, 2º o 3º Puesto Etapa Nacional) o Concurso Escolar Internacional - 5 puntos"/>
+                android:text="@string/ce_concurso_escolar_nacional_1_2_o_3_puesto_etapa_nacional_o_concurso_escolar_internacional_5_puntos"/>
 
             <CheckBox
                 android:id="@+id/checkboxConcursoParticipacion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="(CEP) Participación en la Etapa Nacional de los Concursos Escolares Nacionales - 2 puntos"/>
+                android:text="@string/cep_participaci_n_en_la_etapa_nacional_de_los_concursos_escolares_nacionales_2_puntos"/>
 
             <CheckBox
                 android:id="@+id/checkboxJuegosNacionales"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="(JD) Juegos Deportivos Escolares (1°, 2º o 3° puesto en Etapa Nacional) - 5 puntos"/>
+                android:text="@string/jd_juegos_deportivos_escolares_1_2_o_3_puesto_en_etapa_nacional_5_puntos"/>
 
             <CheckBox
                 android:id="@+id/checkboxJuegosParticipacion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="(JDP) Participación en la Etapa Nacional de los Juegos Deportivos Escolares Nacionales - 2 puntos"/>
+                android:text="@string/jdp_participaci_n_en_la_etapa_nacional_de_los_juegos_deportivos_escolares_nacionales_2_puntos"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Otras condiciones priorizables - Máximo 25 puntos:"
+                android:text="@string/otras_condiciones_priorizables_m_ximo_25_puntos"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"/>
@@ -198,55 +191,55 @@
                 android:id="@+id/checkboxDiscapacidad"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="(D) Discapacidad - 5 puntos"/>
+                android:text="@string/d_discapacidad_5_puntos"/>
 
             <CheckBox
                 android:id="@+id/checkboxBomberos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="(B) Bomberos activos e hijos de bomberos - 5 puntos"/>
+                android:text="@string/b_bomberos_activos_e_hijos_de_bomberos_5_puntos"/>
 
             <CheckBox
                 android:id="@+id/checkboxVoluntarios"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="(V) Voluntarios reconocidos por el MIMP - 5 puntos"/>
+                android:text="@string/v_voluntarios_reconocidos_por_el_mimp_5_puntos"/>
 
             <CheckBox
                 android:id="@+id/checkboxComunidadNativa"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="(IA) Pertenencia a Comunidad Nativa Amazónica o Población Afroperuana - 5 puntos"/>
+                android:text="@string/ia_pertenencia_a_comunidad_nativa_amaz_nica_o_poblaci_n_afroperuana_5_puntos"/>
 
             <CheckBox
                 android:id="@+id/checkboxMetalesPesados"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="(PEM) Población expuesta a metales pesados y otras sustancias químicas - 5 puntos"/>
+                android:text="@string/pem_poblaci_n_expuesta_a_metales_pesados_y_otras_sustancias_qu_micas_5_puntos"/>
 
             <CheckBox
                 android:id="@+id/checkboxPoblacionBeneficiaria"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="(PD) Población beneficiaria (Res. Suprema Nº 264-2022-JUS) - 5 puntos"/>
+                android:text="@string/pd_poblaci_n_beneficiaria_res_suprema_n_264_2022_jus_5_puntos"/>
 
             <CheckBox
                 android:id="@+id/checkboxOrfandad"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="(OR) Población beneficiaria de la Ley N° 31405 (orfandad) - 5 puntos"/>
+                android:text="@string/or_poblaci_n_beneficiaria_de_la_ley_n_31405_orfandad_5_puntos"/>
 
             <CheckBox
                 android:id="@+id/checkboxDesproteccion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="(DF) Desprotección familiar - 5 puntos"/>
+                android:text="@string/df_desprotecci_n_familiar_5_puntos"/>
 
             <CheckBox
                 android:id="@+id/checkboxAgenteSalud"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="(ACS) Agente Comunitario de Salud - 5 puntos"/>
+                android:text="@string/acs_agente_comunitario_de_salud_5_puntos"/>
 
             <LinearLayout
                 android:id="@+id/layoutLenguaOriginaria"
@@ -267,7 +260,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="none"
-                        android:hint="Priorización de lengua originaria"/>
+                        android:hint="@string/priorizaci_n_de_lengua_originaria"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <ImageButton
@@ -275,7 +268,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_question"
-                    android:contentDescription="Información sobre lenguas originarias"
+                    android:contentDescription="@string/informaci_n_sobre_lenguas_originarias"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:padding="8dp"/>
             </LinearLayout>
@@ -315,7 +308,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Desglose del puntaje:"
+                android:text="@string/desglose_del_puntaje"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"/>
@@ -343,8 +336,33 @@
                 android:id="@+id/textViewMensajeAnimo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textStyle="italic"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="24dp"
+                android:textIsSelectable="true"
+                android:autoLink="all"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp">
+
+                <Button
+                    android:id="@+id/buttonSimulacrosPDF"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/acceder_a_simulacros_pdf"
+                    android:layout_marginBottom="8dp"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+                <Button
+                    android:id="@+id/buttonSimulacroOnline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/practicar_simulacro_en_l_nea"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+            </LinearLayout>
 
             <Button
                 android:id="@+id/buttonReiniciar"

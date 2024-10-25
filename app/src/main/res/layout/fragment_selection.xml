@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView
+    android:id="@+id/scrollViewSelection"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -20,7 +21,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Calculadora de Selección"
+                android:text="@string/calculadora_de_selecci_n"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:gravity="center"
@@ -36,7 +37,7 @@
                     android:id="@+id/editTextNombre"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Nombre"/>
+                    android:hint="@string/nombre"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -50,7 +51,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="none"
-                    android:hint="Modalidad"/>
+                    android:hint="@string/modalidad"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -64,7 +65,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
-                    android:hint="Puntaje de Preselección"/>
+                    android:hint="@string/puntaje_de_preselecci_n"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -78,7 +79,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="none"
-                    android:hint="Región IES"/>
+                    android:hint="@string/regi_n_ies"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
@@ -92,7 +93,7 @@
                     android:id="@+id/textViewTipoIESHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Tipo de IES"
+                    android:text="@string/tipo_de_ies"
                     android:textStyle="bold"
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="8dp"/>
@@ -109,7 +110,7 @@
                     android:id="@+id/textViewGestionIESHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Gestión de la IES"
+                    android:text="@string/gesti_n_de_la_ies"
                     android:textStyle="bold"
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="8dp"/>
@@ -131,7 +132,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Seleccione una IES"
+                    android:text="@string/seleccione_una_ies"
                     android:textStyle="bold"
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="8dp"/>
@@ -147,7 +148,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="none"
-                        android:hint="IES (Instituciones de Educación Superior)"/>
+                        android:hint="@string/ies_instituciones_de_educaci_n_superior"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
@@ -233,7 +234,7 @@
                 android:id="@+id/buttonCalcularPuntaje"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Calcular Puntaje"
+                android:text="@string/calcular_puntaje"
                 android:layout_marginTop="16dp"
                 style="@style/Widget.MaterialComponents.Button"/>
 
@@ -241,7 +242,7 @@
                 android:id="@+id/buttonLimpiarFormulario"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Limpiar Formulario"
+                android:text="@string/limpiar_formulario"
                 android:layout_marginTop="8dp"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 
@@ -253,12 +254,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="gone"
+            android:fillViewport="true">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Calculadora de Selección"
+                android:text="@string/calculadora_de_selecci_n"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:gravity="center"
@@ -268,24 +270,26 @@
                 android:id="@+id/textViewReporteTitulo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Reporte de Selección"
+                android:text="@string/reporte_de_selecci_n"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:gravity="center"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginBottom="16dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"/>
 
             <Button
                 android:id="@+id/buttonPuntajeSeleccion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Tu puntaje de selección es: 0 puntos"
+                android:text="@string/tu_puntaje_de_selecci_n_es_0_puntos"
                 android:textSize="18sp"
                 android:layout_marginBottom="16dp"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Desglose del puntaje:"
+                android:text="@string/desglose_del_puntaje"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp"/>
 
@@ -326,7 +330,7 @@
                 android:id="@+id/buttonReiniciarCalculadora"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Reiniciar Calculadora"
+                android:text="@string/reiniciar_calculadora"
                 android:layout_marginTop="8dp"
                 style="@style/Widget.MaterialComponents.Button"/>
 
@@ -334,7 +338,7 @@
                 android:id="@+id/buttonVolverFormulario"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Volver al Formulario"
+                android:text="@string/volver_al_formulario"
                 android:layout_marginTop="16dp"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
         </LinearLayout>

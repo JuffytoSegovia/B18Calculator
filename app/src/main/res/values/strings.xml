@@ -17,17 +17,15 @@
     <string name="junior_description">Estudiante de ingeniería de sistemas empresariales de la Universidad Científica del Sur.</string>
     <string name="juan_name">Juan Manuel Volkmar Padierna</string>
     <string name="juan_description">Estudiante de ingeniería de sistemas e informática de la Universidad Pontificia Bolivariana.</string>
-    <!-- Strings existentes -->
     <string name="calculadora_preseleccion_title">Calculadora de Preselección</string>
     <string name="calculadora_preseleccion_description">Utiliza nuestra herramienta para calcular y simular tu puntaje de preselección en Beca 18.</string>
     <string name="nombre_hint">Tu nombre</string>
     <string name="modalidad_hint">Modalidad de postulación</string>
-    <string name="enp_hint">Puntaje del Examen Nacional de Preselección (0-120)</string>
+    <string name="enp_hint">Puntaje del Examen Nacional de Preselección (0–120)</string>
     <string name="continuar">Continuar</string>
     <string name="limpiar">Limpiar formulario</string>
     <string name="calcular">Calcular Puntaje</string>
     <string name="reiniciar">Reiniciar Calculadora</string>
-    <!-- Strings existentes -->
     <string name="sisfoh_hint">Clasificación SISFOH</string>
     <string name="departamento_hint">Departamento donde culmino la secundaria</string>
     <string name="info_quintil_description">Información sobre quintiles</string>
@@ -51,4 +49,39 @@
     </string>
     <string name="calculadora_seleccion_title">Calculadora de Selección</string>
     <string name="puntaje_preseleccion_hint">Puntaje de Preselección</string>
+    <string name="calculadora_de_selecci_n">Calculadora de Selección</string>
+    <string name="nombre">Nombre</string>
+    <string name="modalidad">Modalidad</string>
+    <string name="puntaje_de_preselecci_n">Puntaje de Preselección</string>
+    <string name="regi_n_ies">Región IES</string>
+    <string name="tipo_de_ies">Tipo de IES</string>
+    <string name="gesti_n_de_la_ies">Gestión de la IES</string>
+    <string name="seleccione_una_ies">Seleccione una IES</string>
+    <string name="ies_instituciones_de_educaci_n_superior">IES (Instituciones de Educación Superior)</string>
+    <string name="calcular_puntaje">Calcular Puntaje</string>
+    <string name="limpiar_formulario">Limpiar Formulario</string>
+    <string name="reporte_de_selecci_n">Reporte de Selección</string>
+    <string name="tu_puntaje_de_selecci_n_es_0_puntos">Tu puntaje de selección es: 0 puntos</string>
+    <string name="desglose_del_puntaje">Desglose del puntaje:</string>
+    <string name="reiniciar_calculadora">Reiniciar Calculadora</string>
+    <string name="volver_al_formulario">Volver al Formulario</string>
+    <string name="participaci_n_en_actividades_extracurriculares_m_ximo_10_puntos">Participación en Actividades Extracurriculares - Máximo 10 puntos:</string>
+    <string name="ce_concurso_escolar_nacional_1_2_o_3_puesto_etapa_nacional_o_concurso_escolar_internacional_5_puntos">(CE) Concurso Escolar Nacional (1°, 2º o 3º Puesto Etapa Nacional) o Concurso Escolar Internacional - 5 puntos</string>
+    <string name="cep_participaci_n_en_la_etapa_nacional_de_los_concursos_escolares_nacionales_2_puntos">(CEP) Participación en la Etapa Nacional de los Concursos Escolares Nacionales - 2 puntos</string>
+    <string name="jd_juegos_deportivos_escolares_1_2_o_3_puesto_en_etapa_nacional_5_puntos">(JD) Juegos Deportivos Escolares (1°, 2º o 3° puesto en Etapa Nacional) - 5 puntos</string>
+    <string name="jdp_participaci_n_en_la_etapa_nacional_de_los_juegos_deportivos_escolares_nacionales_2_puntos">(JDP) Participación en la Etapa Nacional de los Juegos Deportivos Escolares Nacionales - 2 puntos</string>
+    <string name="otras_condiciones_priorizables_m_ximo_25_puntos">Otras condiciones priorizables - Máximo 25 puntos:</string>
+    <string name="d_discapacidad_5_puntos">(D) Discapacidad - 5 puntos</string>
+    <string name="b_bomberos_activos_e_hijos_de_bomberos_5_puntos">(B) Bomberos activos e hijos de bomberos - 5 puntos</string>
+    <string name="v_voluntarios_reconocidos_por_el_mimp_5_puntos">(V) Voluntarios reconocidos por el MIMP - 5 puntos</string>
+    <string name="ia_pertenencia_a_comunidad_nativa_amaz_nica_o_poblaci_n_afroperuana_5_puntos">(IA) Pertenencia a Comunidad Nativa Amazónica o Población Afroperuana – 5 puntos</string>
+    <string name="pem_poblaci_n_expuesta_a_metales_pesados_y_otras_sustancias_qu_micas_5_puntos">(PEM) Población expuesta a metales pesados y otras sustancias químicas – 5 puntos</string>
+    <string name="pd_poblaci_n_beneficiaria_res_suprema_n_264_2022_jus_5_puntos">(PD) Población beneficiaria (Res. Suprema Nº 264-2022-JUS) – 5 puntos</string>
+    <string name="or_poblaci_n_beneficiaria_de_la_ley_n_31405_orfandad_5_puntos">(OR) Población beneficiaria de la Ley N° 31405 (orfandad) – 5 puntos</string>
+    <string name="df_desprotecci_n_familiar_5_puntos">(DF) Desprotección familiar - 5 puntos</string>
+    <string name="acs_agente_comunitario_de_salud_5_puntos">(ACS) Agente Comunitario de Salud – 5 puntos</string>
+    <string name="priorizaci_n_de_lengua_originaria">Priorización de lengua originaria</string>
+    <string name="informaci_n_sobre_lenguas_originarias">Información sobre lenguas originarias</string>
+    <string name="acceder_a_simulacros_pdf">📚 Acceder a Simulacros PDF</string>
+    <string name="practicar_simulacro_en_l_nea">⏱️ Practicar Simulacro en Línea</string>
 </resources>

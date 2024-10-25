@@ -36,7 +36,6 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_preselection -> loadFragment(PreselectionFragment())
                 R.id.navigation_selection -> loadFragment(SelectionFragment())
                 R.id.navigation_credits -> loadFragment(CreditsFragment())
-                else -> false
             }
             true
         }
@@ -68,20 +67,22 @@ class MainActivity : AppCompatActivity() {
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
         when {
             currentFragment is PreselectionFragment && currentFragment.onBackPressed() -> {
-                // Manejado por el fragmento
+                // Manejado por el fragmento, no hacemos nada más
+                return
             }
             currentFragment is SelectionFragment && currentFragment.onBackPressed() -> {
-                // Manejado por el fragmento
+                // Manejado por el fragmento, no hacemos nada más
+                return
             }
             bottomNav.selectedItemId != R.id.navigation_home -> {
                 bottomNav.selectedItemId = R.id.navigation_home
+                return
             }
             else -> {
                 showExitDialog()
+                return
             }
         }
-        // Agregar esta línea
-        super.onBackPressed()
     }
 
     private fun showExitDialog() {

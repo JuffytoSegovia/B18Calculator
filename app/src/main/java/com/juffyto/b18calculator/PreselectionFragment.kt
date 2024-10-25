@@ -1,6 +1,8 @@
 package com.juffyto.b18calculator
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,9 +18,12 @@ import com.google.android.material.textfield.TextInputLayout
 import kotlin.math.min
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.net.Uri
 
 class PreselectionFragment : Fragment() {
 
+    private lateinit var buttonSimulacrosPDF: Button
+    private lateinit var buttonSimulacroOnline: Button
     private var currentWindow = 1 // 1: Inicio, 2: Continuación, 3: Resultado
     private lateinit var layoutInicio: LinearLayout
     private lateinit var layoutContinuacion: LinearLayout
@@ -138,6 +143,8 @@ class PreselectionFragment : Fragment() {
         textViewFormula = view.findViewById(R.id.textViewFormula)
         textViewPuntajeMaximo = view.findViewById(R.id.textViewPuntajeMaximo)
         textViewMensajeAnimo = view.findViewById(R.id.textViewMensajeAnimo)
+        buttonSimulacrosPDF = view.findViewById(R.id.buttonSimulacrosPDF)
+        buttonSimulacroOnline = view.findViewById(R.id.buttonSimulacroOnline)
     }
 
     private fun setupListeners() {
@@ -173,6 +180,17 @@ class PreselectionFragment : Fragment() {
             updateCheckboxes()
             layoutModalidad.error = null
         }
+
+        buttonSimulacrosPDF.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://drive.google.com/drive/u/0/folders/1-EixtoVjF2siolxZ9nd1o337Bfq2XLUp"))
+            startActivity(intent)
+        }
+
+        buttonSimulacroOnline.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://pronabec-app.pronabec.gob.pe/"))
+            startActivity(intent)
+        }
+
     }
 
     private fun setupSpinners() {
@@ -464,6 +482,7 @@ class PreselectionFragment : Fragment() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun mostrarResultado(nombre: String, modalidad: String, puntajeTotal: Int,
                                  puntajeENP: Int, puntajeSisfoh: Int, puntajeQuintil: Int,
                                  puntajeExtracurricular: Int, puntajePriorizable: Int, puntajeLengua: Int) {
@@ -497,6 +516,12 @@ class PreselectionFragment : Fragment() {
         textViewPuntajeMaximo.text = "Puntaje máximo para esta modalidad: $puntajeMaximo puntos"
 
         textViewMensajeAnimo.text = generarMensajeAnimo(puntajeFinal)
+
+        // Scroll al inicio
+        view?.findViewById<ScrollView>(R.id.scrollViewPreselection)?.smoothScrollTo(0, 0)
+
+        currentWindow = 3
+        guardarDatos()
     }
 
     private fun obtenerColorPuntaje(puntaje: Int): Int {
@@ -510,10 +535,64 @@ class PreselectionFragment : Fragment() {
     }
 
     private fun generarMensajeAnimo(puntaje: Int): String {
-        return when {
-            puntaje >= 100 -> "¡Excelente trabajo! Tienes grandes posibilidades de ganar la beca. ¡Sigue adelante!"
+        val puntajeENP = editTextENP.text.toString().toIntOrNull() ?: 0
+        val preguntasCorrectas = puntajeENP / 2
+        val preguntasFaltantes = 60 - preguntasCorrectas
+        val puntosPosiblesMejora = preguntasFaltantes * 2
+
+        val mensajeBase = when {
+            puntaje >= 100 -> "¡Felicidades! Tienes grandes posibilidades de ganar la beca. ¡Sigue adelante!"
             puntaje >= 70 -> "¡Buen esfuerzo! Estás en buen camino para obtener la beca. ¡No te rindas!"
             else -> "Cada punto cuenta. Sigue trabajando duro y no pierdas la esperanza. ¡Tú puedes lograrlo!"
+        }
+
+        val analisisPuntaje = """
+    
+    📊 𝗔𝗻𝗮́𝗹𝗶𝘀𝗶𝘀 𝗱𝗲 𝘁𝘂 𝗽𝘂𝗻𝘁𝗮𝗷𝗲 𝗘𝗡𝗣:
+    • Has respondido correctamente aproximadamente $preguntasCorrectas de 60 preguntas
+    • Podrías mejorar tu puntaje hasta en $puntosPosiblesMejora puntos adicionales si respondes correctamente las $preguntasFaltantes preguntas restantes
+    """.trimIndent()
+
+        val recomendacionENP = """
+
+    📝 𝗥𝗲𝗰𝗼𝗺𝗲𝗻𝗱𝗮𝗰𝗶𝗼𝗻𝗲𝘀 𝗽𝗮𝗿𝗮 𝗺𝗲𝗷𝗼𝗿𝗮𝗿 𝘁𝘂 𝗽𝘂𝗻𝘁𝗮𝗷𝗲:
+
+    𝗘𝗹 𝗘𝘅𝗮𝗺𝗲𝗻 𝗡𝗮𝗰𝗶𝗼𝗻𝗮𝗹 𝗱𝗲 𝗣𝗿𝗲𝘀𝗲𝗹𝗲𝗰𝗰𝗶𝗼́𝗻 (𝗘𝗡𝗣):
+    Es tu mejor oportunidad para aumentar significativamente tu puntaje:
+
+    📋 𝗘𝘀𝘁𝗿𝘂𝗰𝘁𝘂𝗿𝗮 𝗱𝗲𝗹 𝗲𝘅𝗮𝗺𝗲𝗻:
+    • El ENP consta de 60 preguntas en total:
+      - 30 preguntas de competencia matemática
+      - 30 preguntas de competencia lectora
+
+    ⚖️ 𝗦𝗶𝘀𝘁𝗲𝗺𝗮 𝗱𝗲 𝗰𝗮𝗹𝗶𝗳𝗶𝗰𝗮𝗰𝗶𝗼́𝗻:
+    • Cada pregunta correcta vale 2 puntos
+    • Puntaje máximo posible: 120 puntos
+    • No hay puntaje en contra
+    • Tiene una duración de 2 horas (120 minutos)
+
+    💡 𝗘𝘀𝘁𝗿𝗮𝘁𝗲𝗴𝗶𝗮𝘀 𝗽𝗮𝗿𝗮 𝗺𝗲𝗷𝗼𝗿𝗮𝗿:
+    • Practica constantemente ejercicios de matemáticas y comprensión lectora
+    • Practica con simulacros de ENP pasados
+    • Enfócate en resolver correctamente la mayor cantidad de preguntas posible
+    • Gestiona bien tu tiempo durante el examen
+    • Considera que el ENP podría ser tu principal fuente de puntos si no cumples con otros criterios de bonificación
+
+    🎯 𝗥𝗲𝗰𝘂𝗲𝗿𝗱𝗮: Cada pregunta correcta te acerca más a tu meta. ¡Prepárate bien!
+
+    📚 𝗥𝗲𝗰𝘂𝗿𝘀𝗼𝘀 𝗱𝗲 𝗲𝘀𝘁𝘂𝗱𝗶𝗼:
+    Utiliza los botones de abajo para acceder a recursos de práctica:
+    """.trimIndent()
+
+        return if (puntajeENP >= 120) {
+            """
+        $mensajeBase
+        
+        🌟 ¡𝗘𝘅𝗰𝗲𝗹𝗲𝗻𝘁𝗲 𝘁𝗿𝗮𝗯𝗮𝗷𝗼 𝗲𝗻 𝗲𝗹 𝗘𝗡𝗣!
+        Has alcanzado el puntaje máximo posible en el Examen Nacional de Preselección.
+        """.trimIndent()
+        } else {
+            "$mensajeBase\n\n$analisisPuntaje\n$recomendacionENP"
         }
     }
 

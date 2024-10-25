@@ -1,5 +1,6 @@
 package com.juffyto.b18calculator
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -326,6 +327,7 @@ class SelectionFragment : Fragment() {
         layoutIESSelection.visibility = View.VISIBLE
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateIESDetails() {
         val selectedIES = iesData.find { it.nombreIES == spinnerIES.text.toString() }
         layoutIESDetails.visibility = if (selectedIES != null) View.VISIBLE else View.GONE
@@ -386,8 +388,8 @@ class SelectionFragment : Fragment() {
         return isValid
     }
 
+    @SuppressLint("SetTextI18n")
     private fun calcularYMostrarReporte() {
-        val nombre = editTextNombre.text.toString()
         val modalidad = spinnerModalidad.text.toString()
         val puntajePreseleccion = editTextPuntajePreseleccion.text.toString().toIntOrNull() ?: 0
         val iesSeleccionada = iesData.find { it.nombreIES == spinnerIES.text.toString() }
@@ -456,7 +458,7 @@ class SelectionFragment : Fragment() {
         val puntajeActual = puntajeRanking + puntajeGestion + puntajeSelectividad
         val regionActual = iesActual.regionIES
 
-        recomendaciones.append("\n📈 Recomendaciones para mejorar tu puntaje actual ($puntajeActual puntos):\n")
+        recomendaciones.append("📈 Recomendaciones para mejorar tu puntaje actual ($puntajeActual puntos), con otras IES:\n")
 
         // Obtener todas las IES que dan mejor puntaje
         val mejoresIES = iesData.map { ies ->
@@ -613,15 +615,27 @@ class SelectionFragment : Fragment() {
         saveState()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun mostrarReporte() {
         layoutFormularioSeleccion.visibility = View.GONE
         layoutReporteSeleccion.visibility = View.VISIBLE
         textViewReporteTitulo.text = "Reporte de Selección para ${editTextNombre.text}"
+
         // Aplicar estilos consistentes
         textViewDesglosePuntaje.setPadding(0, 16, 0, 16)
         textViewPuntajeMaximo.setPadding(0, 16, 0, 16)
         textViewMensajeAnimo.setPadding(0, 16, 0, 16)
         textViewRecomendaciones.setPadding(0, 16, 0, 16)
+
+        // Hacer scroll hacia arriba con múltiples métodos para asegurar que funcione
+        view?.findViewById<ScrollView>(R.id.scrollViewSelection)?.let { scrollView ->
+            scrollView.post {
+                scrollView.fullScroll(ScrollView.FOCUS_UP)
+                scrollView.smoothScrollTo(0, 0)
+                textViewReporteTitulo.requestFocus()
+            }
+        }
+
         currentWindow = 2
         saveState()
     }
