@@ -151,7 +151,28 @@ class SelectionFragment : Fragment() {
             validateField(editTextPuntajePreseleccion)
         }
 
-        editTextPuntajePreseleccion.addTextChangedListener(createTextWatcher { validateField(editTextPuntajePreseleccion) })
+        editTextPuntajePreseleccion.addTextChangedListener(createTextWatcher {
+            val puntajeText = editTextPuntajePreseleccion.text.toString()
+            if (puntajeText.isNotEmpty()) {
+                val puntaje = puntajeText.toIntOrNull()
+                val maxPuntaje = if (spinnerModalidad.text.toString() == "EIB") 180 else 170
+                val textInputLayout = editTextPuntajePreseleccion.parent.parent as? TextInputLayout
+
+                when {
+                    puntaje == null -> {
+                        textInputLayout?.error = "Ingrese un número válido"
+                    }
+                    puntaje < 0 || puntaje > maxPuntaje -> {
+                        textInputLayout?.error = "El puntaje debe estar entre 0 y $maxPuntaje"
+                    }
+                    else -> {
+                        textInputLayout?.error = null
+                    }
+                }
+            } else {
+                (editTextPuntajePreseleccion.parent.parent as? TextInputLayout)?.error = null
+            }
+        })
 
         spinnerRegionIES.setOnItemClickListener { _, _, _, _ ->
             layoutIESFilters.visibility = View.VISIBLE
@@ -163,6 +184,8 @@ class SelectionFragment : Fragment() {
         }
 
         spinnerIES.setOnItemClickListener { _, _, _, _ ->
+            // Limpiar error cuando se selecciona una IES
+            (spinnerIES.parent.parent as? TextInputLayout)?.error = null
             updateIESDetails()
             saveState()
         }
@@ -313,15 +336,16 @@ class SelectionFragment : Fragment() {
         }
 
         val iesNames = iesFiltered.map { it.nombreIES }
-        val currentSelection = spinnerIES.text.toString() // Guardamos la selección actual
+        val currentSelection = spinnerIES.text.toString()
 
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, iesNames)
         spinnerIES.setAdapter(adapter)
 
-        // Si la selección actual está en la lista filtrada, la mantenemos
         if (iesNames.contains(currentSelection)) {
             spinnerIES.setText(currentSelection, false)
             updateIESDetails()
+            // Limpiar error si hay una selección válida
+            (spinnerIES.parent.parent as? TextInputLayout)?.error = null
         }
 
         layoutIESSelection.visibility = View.VISIBLE
@@ -585,12 +609,27 @@ class SelectionFragment : Fragment() {
         layoutIESFilters.visibility = View.GONE
         layoutIESSelection.visibility = View.GONE
 
-        // Limpiar errores
-        (editTextNombre.parent.parent as? TextInputLayout)?.error = null
-        (spinnerModalidad.parent.parent as? TextInputLayout)?.error = null
-        (editTextPuntajePreseleccion.parent.parent as? TextInputLayout)?.error = null
-        (spinnerRegionIES.parent.parent as? TextInputLayout)?.error = null
-        (spinnerIES.parent.parent as? TextInputLayout)?.error = null
+        // Limpiar errores y restablecer espaciados
+        (editTextNombre.parent.parent as? TextInputLayout)?.apply {
+            error = null
+            isErrorEnabled = false
+        }
+        (spinnerModalidad.parent.parent as? TextInputLayout)?.apply {
+            error = null
+            isErrorEnabled = false
+        }
+        (editTextPuntajePreseleccion.parent.parent as? TextInputLayout)?.apply {
+            error = null
+            isErrorEnabled = false
+        }
+        (spinnerRegionIES.parent.parent as? TextInputLayout)?.apply {
+            error = null
+            isErrorEnabled = false
+        }
+        (spinnerIES.parent.parent as? TextInputLayout)?.apply {
+            error = null
+            isErrorEnabled = false
+        }
 
         // Restablecer el hint del puntaje de preselección
         (editTextPuntajePreseleccion.parent.parent as? TextInputLayout)?.hint = "Puntaje de Preselección"

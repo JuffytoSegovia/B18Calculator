@@ -24,6 +24,7 @@ class PreselectionFragment : Fragment() {
 
     private lateinit var buttonSimulacrosPDF: Button
     private lateinit var buttonSimulacroOnline: Button
+    private var shouldShowErrors = false
     private var currentWindow = 1 // 1: Inicio, 2: Continuación, 3: Resultado
     private lateinit var layoutInicio: LinearLayout
     private lateinit var layoutContinuacion: LinearLayout
@@ -33,7 +34,6 @@ class PreselectionFragment : Fragment() {
     private lateinit var editTextNombre: TextInputEditText
     private lateinit var spinnerModalidad: AutoCompleteTextView
     private lateinit var editTextENP: TextInputEditText
-    private lateinit var textViewENPError: TextView
     private lateinit var spinnerSisfoh: AutoCompleteTextView
     private lateinit var spinnerDepartamento: AutoCompleteTextView
     private lateinit var spinnerLenguaOriginaria: AutoCompleteTextView
@@ -81,7 +81,6 @@ class PreselectionFragment : Fragment() {
         initializeViews(view)
         setupListeners()
         setupSpinners()
-        setupENPValidation()
 
         // Restaurar el estado si existe
         savedInstanceState?.let {
@@ -106,7 +105,6 @@ class PreselectionFragment : Fragment() {
         editTextNombre = view.findViewById(R.id.editTextNombre)
         spinnerModalidad = view.findViewById(R.id.spinnerModalidad)
         editTextENP = view.findViewById(R.id.editTextENP)
-        textViewENPError = view.findViewById(R.id.textViewENPError)
         spinnerSisfoh = view.findViewById(R.id.spinnerSisfoh)
         spinnerDepartamento = view.findViewById(R.id.spinnerDepartamento)
         spinnerLenguaOriginaria = view.findViewById(R.id.spinnerLenguaOriginaria)
@@ -148,8 +146,64 @@ class PreselectionFragment : Fragment() {
     }
 
     private fun setupListeners() {
+        // Validación en tiempo real para los campos
+        editTextNombre.addTextChangedListener(createTextWatcher {
+            if (shouldShowErrors) {
+                validateField(editTextNombre)
+            }
+        })
+
+        spinnerModalidad.setOnItemClickListener { _, _, _, _ ->
+            if (!spinnerModalidad.text.isNullOrBlank()) {
+                layoutModalidad.error = null
+            }
+            updateSisfohOptions()
+            updateLenguaOriginariaVisibility()
+            updateCheckboxes()
+        }
+
+        // Validación en tiempo real para ENP
+        editTextENP.addTextChangedListener(createTextWatcher {
+            val enpText = editTextENP.text.toString()
+            if (enpText.isNotEmpty()) {
+                val enpValue = enpText.toIntOrNull()
+                val textInputLayout = editTextENP.parent.parent as? TextInputLayout
+                when {
+                    enpValue == null -> {
+                        textInputLayout?.error = "Ingrese un número válido"
+                    }
+                    enpValue < 0 || enpValue > 120 -> {
+                        textInputLayout?.error = "El puntaje debe estar entre 0 y 120"
+                    }
+                    enpValue % 2 != 0 -> {
+                        textInputLayout?.error = "El puntaje debe ser un número par"
+                    }
+                    else -> {
+                        textInputLayout?.error = null
+                    }
+                }
+            } else {
+                (editTextENP.parent.parent as? TextInputLayout)?.error = null
+            }
+        })
+
+        spinnerSisfoh.setOnItemClickListener { _, _, _, _ ->
+            if (!spinnerSisfoh.text.isNullOrBlank()) {
+                layoutSisfoh.error = null
+            }
+        }
+
+        spinnerDepartamento.setOnItemClickListener { _, _, _, _ ->
+            if (!spinnerDepartamento.text.isNullOrBlank()) {
+                layoutDepartamento.error = null
+            }
+        }
+
         buttonContinuar.setOnClickListener {
-            if (validateInitialInputs()) {
+            shouldShowErrors = true
+            if (!validateInitialInputs()) {
+                Toast.makeText(context, "Por favor, complete todos los campos correctamente", Toast.LENGTH_SHORT).show()
+            } else {
                 showContinuationLayout()
             }
         }
@@ -174,11 +228,10 @@ class PreselectionFragment : Fragment() {
             showLenguaInfo()
         }
 
-        spinnerModalidad.setOnItemClickListener { _, _, _, _ ->
-            updateSisfohOptions()
-            updateLenguaOriginariaVisibility()
-            updateCheckboxes()
-            layoutModalidad.error = null
+        spinnerLenguaOriginaria.setOnItemClickListener { _, _, _, _ ->
+            if (!spinnerLenguaOriginaria.text.isNullOrBlank()) {
+                (spinnerLenguaOriginaria.parent.parent as? TextInputLayout)?.error = null
+            }
         }
 
         buttonSimulacrosPDF.setOnClickListener {
@@ -190,7 +243,16 @@ class PreselectionFragment : Fragment() {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://pronabec-app.pronabec.gob.pe/"))
             startActivity(intent)
         }
+    }
 
+    private fun createTextWatcher(afterTextChanged: () -> Unit): TextWatcher {
+        return object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                afterTextChanged()
+            }
+        }
     }
 
     private fun setupSpinners() {
@@ -226,7 +288,11 @@ class PreselectionFragment : Fragment() {
             resources.getStringArray(R.array.sisfoh_options)
         }
         spinnerSisfoh.setAdapter(ArrayAdapter(requireContext(), R.layout.list_item, sisfohOptions))
-        layoutSisfoh.error = null
+
+        // Solo limpiar el error si ya hay un valor seleccionado
+        if (!spinnerSisfoh.text.isNullOrBlank()) {
+            layoutSisfoh.error = null
+        }
     }
 
     private fun updateLenguaOriginariaVisibility() {
@@ -240,79 +306,34 @@ class PreselectionFragment : Fragment() {
         checkboxOrfandad.isEnabled = modalidad != "Protección"
     }
 
-    private fun setupENPValidation() {
-        editTextENP.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if (s?.isNotEmpty() == true) {
-                    validateENP(s.toString())
-                } else {
-                    hideENPError()
-                }
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
-    }
-
-    private fun validateENP(enp: String): Boolean {
-        val enpValue = enp.toIntOrNull()
-        return when {
-            enpValue == null -> {
-                showENPError("Ingrese un número válido")
-                false
-            }
-            enpValue < 0 || enpValue > 120 -> {
-                showENPError("El puntaje debe estar entre 0 y 120")
-                false
-            }
-            enpValue % 2 != 0 -> {
-                showENPError("El puntaje debe ser un número par")
-                false
-            }
-            else -> {
-                hideENPError()
-                true
-            }
-        }
-    }
-
-    private fun showENPError(message: String) {
-        textViewENPError.text = message
-        textViewENPError.visibility = View.VISIBLE
-    }
-
-    private fun hideENPError() {
-        textViewENPError.visibility = View.GONE
-    }
-
     private fun validateInitialInputs(): Boolean {
+        shouldShowErrors = true
         var isValid = true
 
-        if (editTextNombre.text.isNullOrBlank()) {
-            editTextNombre.error = "Ingrese su nombre"
-            isValid = false
-        }
+        // Validar nombre
+        validateField(editTextNombre)
+        isValid = isValid && (editTextNombre.parent.parent as? TextInputLayout)?.error == null
 
-        if (spinnerModalidad.text.isNullOrBlank()) {
-            layoutModalidad.error = "Seleccione una modalidad"
-            isValid = false
-        }
+        // Validar modalidad
+        validateField(spinnerModalidad)
+        isValid = isValid && layoutModalidad.error == null
 
-        if (editTextENP.text.isNullOrBlank()) {
-            showENPError("Ingrese un número válido")
-            isValid = false
-        } else if (!validateENP(editTextENP.text.toString())) {
-            isValid = false
-        }
+        // Validar ENP
+        validateField(editTextENP)
+        isValid = isValid && (editTextENP.parent.parent as? TextInputLayout)?.error == null
 
-        if (spinnerSisfoh.text.isNullOrBlank()) {
-            layoutSisfoh.error = "Seleccione una clasificación SISFOH"
-            isValid = false
-        }
+        // Validar SISFOH
+        validateField(spinnerSisfoh)
+        isValid = isValid && layoutSisfoh.error == null
 
-        if (spinnerDepartamento.text.isNullOrBlank()) {
-            layoutDepartamento.error = "Seleccione un departamento"
-            isValid = false
+        // Validar Departamento
+        validateField(spinnerDepartamento)
+        isValid = isValid && layoutDepartamento.error == null
+
+        // Validar Lengua Originaria para modalidad EIB
+        if (spinnerModalidad.text.toString() == "EIB") {
+            validateField(spinnerLenguaOriginaria)
+            isValid = isValid && (spinnerLenguaOriginaria.parent.parent as? TextInputLayout)?.error == null
         }
 
         return isValid
@@ -350,6 +371,7 @@ class PreselectionFragment : Fragment() {
 
     private fun calculateAndShowResult() {
         try {
+            shouldShowErrors = true
             if (!validateInitialInputs()) {
                 Toast.makeText(context, "Por favor, complete todos los campos correctamente", Toast.LENGTH_SHORT).show()
                 return
@@ -376,10 +398,6 @@ class PreselectionFragment : Fragment() {
                 return
             }
 
-            if (!validateFields(nombre, modalidad, enp, sisfoh, departamento)) {
-                return
-            }
-
             val puntajeENP = enp
             val puntajeSisfoh = calcularPuntajeSisfoh(sisfoh, modalidad)
             val puntajeQuintil = calcularPuntajeQuintil(departamento)
@@ -389,7 +407,8 @@ class PreselectionFragment : Fragment() {
 
             val puntajeTotal = puntajeENP + puntajeSisfoh + puntajeQuintil + puntajeExtracurricular + puntajePriorizable + puntajeLengua
 
-            mostrarResultado(nombre, modalidad, puntajeTotal, puntajeENP, puntajeSisfoh, puntajeQuintil, puntajeExtracurricular, puntajePriorizable, puntajeLengua)
+            mostrarResultado(nombre, modalidad, puntajeTotal, puntajeENP, puntajeSisfoh, puntajeQuintil,
+                puntajeExtracurricular, puntajePriorizable, puntajeLengua)
             currentWindow = 3
             guardarDatos()
         } catch (e: Exception) {
@@ -399,33 +418,64 @@ class PreselectionFragment : Fragment() {
     }
 
     // Agregar este método auxiliar para validación adicional
-    private fun validateFields(nombre: String, modalidad: String, enp: Int, sisfoh: String, departamento: String): Boolean {
-        if (nombre.isBlank()) {
-            Toast.makeText(context, "El nombre es requerido", Toast.LENGTH_SHORT).show()
-            return false
+    private fun validateField(view: View) {
+        when (view) {
+            editTextNombre -> {
+                if (editTextNombre.text.isNullOrBlank()) {
+                    (editTextNombre.parent.parent as? TextInputLayout)?.error = "El nombre es requerido"
+                } else {
+                    (editTextNombre.parent.parent as? TextInputLayout)?.error = null
+                }
+            }
+            spinnerModalidad -> {
+                if (spinnerModalidad.text.isNullOrBlank()) {
+                    layoutModalidad.error = "Seleccione una modalidad"
+                } else {
+                    layoutModalidad.error = null
+                }
+            }
+            editTextENP -> {
+                val enpValue = editTextENP.text.toString().toIntOrNull()
+                when {
+                    editTextENP.text.isNullOrBlank() -> {
+                        (editTextENP.parent.parent as? TextInputLayout)?.error = "El puntaje ENP es requerido"
+                    }
+                    enpValue == null -> {
+                        (editTextENP.parent.parent as? TextInputLayout)?.error = "Ingrese un número válido"
+                    }
+                    enpValue < 0 || enpValue > 120 -> {
+                        (editTextENP.parent.parent as? TextInputLayout)?.error = "El puntaje debe estar entre 0 y 120"
+                    }
+                    enpValue % 2 != 0 -> {
+                        (editTextENP.parent.parent as? TextInputLayout)?.error = "El puntaje debe ser un número par"
+                    }
+                    else -> {
+                        (editTextENP.parent.parent as? TextInputLayout)?.error = null
+                    }
+                }
+            }
+            spinnerSisfoh -> {
+                if (spinnerSisfoh.text.isNullOrBlank()) {
+                    layoutSisfoh.error = "Seleccione una clasificación SISFOH"
+                } else {
+                    layoutSisfoh.error = null
+                }
+            }
+            spinnerDepartamento -> {
+                if (spinnerDepartamento.text.isNullOrBlank()) {
+                    layoutDepartamento.error = "Seleccione un departamento"
+                } else {
+                    layoutDepartamento.error = null
+                }
+            }
+            spinnerLenguaOriginaria -> {
+                if (spinnerModalidad.text.toString() == "EIB" && spinnerLenguaOriginaria.text.isNullOrBlank()) {
+                    (spinnerLenguaOriginaria.parent.parent as? TextInputLayout)?.error = "Este campo es obligatorio para la modalidad EIB"
+                } else {
+                    (spinnerLenguaOriginaria.parent.parent as? TextInputLayout)?.error = null
+                }
+            }
         }
-
-        if (modalidad.isBlank()) {
-            Toast.makeText(context, "La modalidad es requerida", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        if (enp < 0 || enp > 120) {
-            Toast.makeText(context, "El puntaje ENP debe estar entre 0 y 120", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        if (sisfoh.isBlank()) {
-            Toast.makeText(context, "La clasificación SISFOH es requerida", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        if (departamento.isBlank()) {
-            Toast.makeText(context, "El departamento es requerido", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        return true
     }
 
     private fun calcularPuntajeSisfoh(sisfoh: String, modalidad: String): Int {
@@ -633,19 +683,40 @@ class PreselectionFragment : Fragment() {
     }
 
     private fun limpiarFormulario() {
+        shouldShowErrors = false
+
         editTextNombre.text?.clear()
         spinnerModalidad.text?.clear()
         editTextENP.text?.clear()
         spinnerSisfoh.text?.clear()
         spinnerDepartamento.text?.clear()
         spinnerLenguaOriginaria.text?.clear()
-        hideENPError()
 
-        editTextNombre.error = null
-        layoutModalidad.error = null
-        layoutSisfoh.error = null
-        layoutDepartamento.error = null
-        (spinnerLenguaOriginaria.parent.parent as TextInputLayout).error = null
+        // Limpiar errores y restablecer espaciados
+        (editTextNombre.parent.parent as? TextInputLayout)?.apply {
+            error = null
+            isErrorEnabled = false
+        }
+        layoutModalidad.apply {
+            error = null
+            isErrorEnabled = false
+        }
+        (editTextENP.parent.parent as? TextInputLayout)?.apply {
+            error = null
+            isErrorEnabled = false
+        }
+        layoutSisfoh.apply {
+            error = null
+            isErrorEnabled = false
+        }
+        layoutDepartamento.apply {
+            error = null
+            isErrorEnabled = false
+        }
+        (spinnerLenguaOriginaria.parent.parent as? TextInputLayout)?.apply {
+            error = null
+            isErrorEnabled = false
+        }
 
         // Limpiar checkboxes
         checkboxConcursoNacional.isChecked = false
@@ -666,7 +737,7 @@ class PreselectionFragment : Fragment() {
         updateCheckboxes()
         updateLenguaOriginariaVisibility()
 
-        // Al final, en lugar de limpiar todos los datos guardados:
+        // Limpiar datos guardados
         val sharedPrefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
         with(sharedPrefs.edit()) {
             sharedPrefs.all.keys
