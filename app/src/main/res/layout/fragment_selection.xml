@@ -282,9 +282,8 @@
                 android:id="@+id/buttonPuntajeSeleccion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/tu_puntaje_de_selecci_n_es_0_puntos"
                 android:textSize="18sp"
-                android:layout_marginBottom="16dp"/>
+                android:textStyle="bold"/>
 
             <TextView
                 android:layout_width="match_parent"

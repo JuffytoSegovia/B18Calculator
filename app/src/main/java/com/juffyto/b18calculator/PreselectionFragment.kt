@@ -527,7 +527,7 @@ class PreselectionFragment : Fragment() {
     private fun obtenerColorPuntaje(puntaje: Int): Int {
         val color = when {
             puntaje >= 100 -> ContextCompat.getColor(requireContext(), R.color.green)
-            puntaje >= 70 -> ContextCompat.getColor(requireContext(), R.color.yellow)
+            puntaje >= 70 -> ContextCompat.getColor(requireContext(), R.color.orange)
             else -> ContextCompat.getColor(requireContext(), R.color.red)
         }
         buttonPuntajeResultado.backgroundTintList = ColorStateList.valueOf(color)
@@ -755,8 +755,6 @@ class PreselectionFragment : Fragment() {
         textViewFormula.text = sharedPrefs.getString("preselection_formula", "")
         textViewPuntajeMaximo.text = sharedPrefs.getString("preselection_puntajeMaximo", "")
         textViewMensajeAnimo.text = sharedPrefs.getString("preselection_mensajeAnimo", "")
-        buttonPuntajeResultado.setTextColor(sharedPrefs.getInt("preselection_colorPuntaje",
-            ContextCompat.getColor(requireContext(), R.color.black)))
         buttonPuntajeResultado.backgroundTintList = ColorStateList.valueOf(colorBoton)
 
         // Cargar estado de los checkboxes
