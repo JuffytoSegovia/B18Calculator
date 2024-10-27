@@ -7,14 +7,13 @@
     <string name="selection_title">Calculadora de selección</string>
     <string name="selection_description">Simula tu puntaje de selección para beca 18</string>
     <string name="credits_title">Créditos</string>
-    <string name="credits_description">Conoce a los creadores del app</string>
+    <string name="credits_description">Conoce y apoya al creador del app</string>
     <string name="icon_preselection">Icono de preselección</string>
     <string name="icon_selection">Icono de selección</string>
     <string name="icon_credits">Icono de créditos</string>
-    <!-- ... otros strings ... -->
-    <string name="credits_intro">B18 Calculator: Herramienta creada por estudiantes para ayudar a postulantes de Beca 18.</string>
+    <string name="credits_intro">B18 Calculator: Herramienta creada por Juffyto Segovia para ayudar a los postulantes de Beca 18.</string>
     <string name="junior_name">Junior Segovia Chalco</string>
-    <string name="junior_description">Estudiante de ingeniería de sistemas empresariales de la Universidad Científica del Sur.</string>
+    <string name="junior_description">Ganador de BECA 18 y estudiante de ingeniería de sistemas empresariales de la Universidad Científica del Sur.</string>
     <string name="juan_name">Juan Manuel Volkmar Padierna</string>
     <string name="juan_description">Estudiante de ingeniería de sistemas e informática de la Universidad Pontificia Bolivariana.</string>
     <string name="calculadora_preseleccion_title">Calculadora de Preselección</string>
@@ -76,7 +75,7 @@
     <string name="v_voluntarios_reconocidos_por_el_mimp_5_puntos">(V) Voluntarios reconocidos por el MIMP - 5 puntos</string>
     <string name="ia_pertenencia_a_comunidad_nativa_amaz_nica_o_poblaci_n_afroperuana_5_puntos">(IA) Pertenencia a Comunidad Nativa Amazónica o Población Afroperuana – 5 puntos</string>
     <string name="pem_poblaci_n_expuesta_a_metales_pesados_y_otras_sustancias_qu_micas_5_puntos">(PEM) Población expuesta a metales pesados y otras sustancias químicas – 5 puntos</string>
-    <string name="pd_poblaci_n_beneficiaria_res_suprema_n_264_2022_jus_5_puntos">(PD) Población beneficiaria (Res. Suprema Nº 264-2022-JUS) – 5 puntos</string>
+    <string name="pd_poblaci_n_beneficiaria_res_suprema_n_264_2022_jus_5_puntos">(PD) Población beneficiaria (Res. Suprema Nº 264–2022–JUS) – 5 puntos</string>
     <string name="or_poblaci_n_beneficiaria_de_la_ley_n_31405_orfandad_5_puntos">(OR) Población beneficiaria de la Ley N° 31405 (orfandad) – 5 puntos</string>
     <string name="df_desprotecci_n_familiar_5_puntos">(DF) Desprotección familiar - 5 puntos</string>
     <string name="acs_agente_comunitario_de_salud_5_puntos">(ACS) Agente Comunitario de Salud – 5 puntos</string>
@@ -84,4 +83,9 @@
     <string name="informaci_n_sobre_lenguas_originarias">Información sobre lenguas originarias</string>
     <string name="acceder_a_simulacros_pdf">📚 Acceder a Simulacros PDF</string>
     <string name="practicar_simulacro_en_l_nea">⏱️ Practicar Simulacro en Línea</string>
+    <string name="redessociales">Sígueme en mis redes sociales</string>
+    <string name="grupos">Únete a la comunidad de becarios</string>
+    <string name="asesoria">Asesoría personalizada</string>
+    <string name="donaciones">Donaciones</string>
+
 </resources>

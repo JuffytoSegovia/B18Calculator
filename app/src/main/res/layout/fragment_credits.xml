@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
+        <!-- Título y descripción -->
         <TextView
             android:id="@+id/creditsTitle"
             android:layout_width="wrap_content"
@@ -34,17 +35,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- Junior Card -->
+        <!-- Perfil -->
         <androidx.cardview.widget.CardView
-            android:id="@+id/juniorCard"
+            android:id="@+id/profileCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="4dp"
-            app:layout_constraintTop_toBottomOf="@id/creditsIntro"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/creditsIntro">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -53,7 +52,6 @@
                 android:padding="16dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/juniorImage"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
                     android:src="@drawable/junior"
@@ -62,7 +60,6 @@
                     app:civ_border_color="@color/blue_light"/>
 
                 <TextView
-                    android:id="@+id/juniorName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/junior_name"
@@ -71,7 +68,6 @@
                     android:layout_marginTop="8dp"/>
 
                 <TextView
-                    android:id="@+id/juniorDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/junior_description"
@@ -80,17 +76,15 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Juan Card (similar changes as Junior Card) -->
+        <!-- Redes Sociales -->
         <androidx.cardview.widget.CardView
-            android:id="@+id/juanCard"
+            android:id="@+id/socialCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="4dp"
-            app:layout_constraintTop_toBottomOf="@id/juniorCard"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/profileCard">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -98,31 +92,338 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/juanImage"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:src="@drawable/juan"
-                    android:layout_gravity="center"
-                    app:civ_border_width="2dp"
-                    app:civ_border_color="@color/blue_light"/>
-
                 <TextView
-                    android:id="@+id/juanName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/juan_name"
+                    android:text="@string/redessociales"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     android:layout_gravity="center"
-                    android:layout_marginTop="8dp"/>
+                    android:layout_marginBottom="16dp"/>
 
-                <TextView
-                    android:id="@+id/juanDescription"
+                <GridLayout
+                    android:id="@+id/socialGrid"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/juan_description"
-                    android:textAlignment="center"
-                    android:layout_marginTop="8dp"/>
+                    android:columnCount="3"
+                    android:rowCount="2"
+                    android:alignmentMode="alignMargins">
+
+                    <ImageView
+                        android:id="@+id/linkedinImage"
+                        android:layout_width="0dp"
+                        android:layout_height="80dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        android:padding="8dp"
+                        android:src="@drawable/linkedin"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"/>
+
+                    <ImageView
+                        android:id="@+id/instagramImage"
+                        android:layout_width="0dp"
+                        android:layout_height="80dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        android:padding="8dp"
+                        android:src="@drawable/instagram"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"/>
+
+                    <ImageView
+                        android:id="@+id/facebookImage"
+                        android:layout_width="0dp"
+                        android:layout_height="80dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        android:padding="8dp"
+                        android:src="@drawable/facebook"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"/>
+
+                    <ImageView
+                        android:id="@+id/tiktokImage"
+                        android:layout_width="0dp"
+                        android:layout_height="80dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        android:padding="8dp"
+                        android:src="@drawable/tiktok"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"/>
+
+                    <ImageView
+                        android:id="@+id/youtubeImage"
+                        android:layout_width="0dp"
+                        android:layout_height="80dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        android:padding="8dp"
+                        android:src="@drawable/youtube"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"/>
+
+                    <ImageView
+                        android:id="@+id/websiteImage"
+                        android:layout_width="0dp"
+                        android:layout_height="80dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        android:padding="8dp"
+                        android:src="@drawable/web"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"/>
+                </GridLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Grupos -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/groupsCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:layout_constraintTop_toBottomOf="@id/socialCard">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/grupos"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="16dp"/>
+
+                <GridLayout
+                    android:id="@+id/groupsGrid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnCount="2"
+                    android:rowCount="2"
+                    android:alignmentMode="alignMargins">
+
+                    <ImageView
+                        android:id="@+id/whatsappGroupImage"
+                        android:layout_width="0dp"
+                        android:layout_height="80dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        android:padding="8dp"
+                        android:src="@drawable/whatsapp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"/>
+
+                    <ImageView
+                        android:id="@+id/discordImage"
+                        android:layout_width="0dp"
+                        android:layout_height="80dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        android:padding="8dp"
+                        android:src="@drawable/discord"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"/>
+
+                    <ImageView
+                        android:id="@+id/telegramImage"
+                        android:layout_width="0dp"
+                        android:layout_height="80dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        android:padding="8dp"
+                        android:src="@drawable/telegram"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"/>
+
+                    <ImageView
+                        android:id="@+id/facebookGroupImage"
+                        android:layout_width="0dp"
+                        android:layout_height="80dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        android:padding="8dp"
+                        android:src="@drawable/facebook"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground"/>
+                </GridLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Asesoría -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/advisoryCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:layout_constraintTop_toBottomOf="@id/groupsCard">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/asesoria"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="16dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <FrameLayout
+                        android:id="@+id/advisoryButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground">
+
+                        <ImageView
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            android:src="@drawable/advisory"
+                            android:layout_gravity="center"/>
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/whatsappAdvisoryButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground">
+
+                        <ImageView
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            android:src="@drawable/whatsapp"
+                            android:layout_gravity="center"/>
+                    </FrameLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Donaciones -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/donationsCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:layout_constraintTop_toBottomOf="@id/advisoryCard">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/donaciones"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="16dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <LinearLayout
+                        android:id="@+id/yapeButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground">
+
+                        <ImageView
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            android:src="@drawable/yape"
+                            android:layout_gravity="center"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/plinButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground">
+
+                        <ImageView
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            android:src="@drawable/plin"
+                            android:layout_gravity="center"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginTop="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="939824399"
+                        android:textSize="18sp"
+                        android:layout_marginEnd="8dp"/>
+
+                    <ImageButton
+                        android:id="@+id/copyNumberButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_copy"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="8dp"/>
+                </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
