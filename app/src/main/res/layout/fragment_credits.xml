@@ -96,7 +96,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/redessociales"
-                    android:textSize="20sp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"/>
@@ -119,7 +119,8 @@
                         android:src="@drawable/linkedin"
                         android:clickable="true"
                         android:focusable="true"
-                        android:background="?attr/selectableItemBackground"/>
+                        android:background="?attr/selectableItemBackground"
+                        android:contentDescription="@string/icon_linkedin"/>
 
                     <ImageView
                         android:id="@+id/instagramImage"
@@ -131,7 +132,8 @@
                         android:src="@drawable/instagram"
                         android:clickable="true"
                         android:focusable="true"
-                        android:background="?attr/selectableItemBackground"/>
+                        android:background="?attr/selectableItemBackground"
+                        android:contentDescription="@string/icon_instagram"/>
 
                     <ImageView
                         android:id="@+id/facebookImage"
@@ -143,7 +145,8 @@
                         android:src="@drawable/facebook"
                         android:clickable="true"
                         android:focusable="true"
-                        android:background="?attr/selectableItemBackground"/>
+                        android:background="?attr/selectableItemBackground"
+                        android:contentDescription="@string/icon_facebook"/>
 
                     <ImageView
                         android:id="@+id/tiktokImage"
@@ -155,7 +158,8 @@
                         android:src="@drawable/tiktok"
                         android:clickable="true"
                         android:focusable="true"
-                        android:background="?attr/selectableItemBackground"/>
+                        android:background="?attr/selectableItemBackground"
+                        android:contentDescription="@string/icon_tiktok"/>
 
                     <ImageView
                         android:id="@+id/youtubeImage"
@@ -167,7 +171,8 @@
                         android:src="@drawable/youtube"
                         android:clickable="true"
                         android:focusable="true"
-                        android:background="?attr/selectableItemBackground"/>
+                        android:background="?attr/selectableItemBackground"
+                        android:contentDescription="@string/icon_youtube"/>
 
                     <ImageView
                         android:id="@+id/websiteImage"
@@ -179,7 +184,8 @@
                         android:src="@drawable/web"
                         android:clickable="true"
                         android:focusable="true"
-                        android:background="?attr/selectableItemBackground"/>
+                        android:background="?attr/selectableItemBackground"
+                        android:contentDescription="@string/icon_website"/>
                 </GridLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -204,7 +210,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/grupos"
-                    android:textSize="20sp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"/>
@@ -227,7 +233,8 @@
                         android:src="@drawable/whatsapp"
                         android:clickable="true"
                         android:focusable="true"
-                        android:background="?attr/selectableItemBackground"/>
+                        android:background="?attr/selectableItemBackground"
+                        android:contentDescription="@string/icon_whatsapp"/>
 
                     <ImageView
                         android:id="@+id/discordImage"
@@ -239,7 +246,8 @@
                         android:src="@drawable/discord"
                         android:clickable="true"
                         android:focusable="true"
-                        android:background="?attr/selectableItemBackground"/>
+                        android:background="?attr/selectableItemBackground"
+                        android:contentDescription="@string/icon_discord"/>
 
                     <ImageView
                         android:id="@+id/telegramImage"
@@ -251,7 +259,8 @@
                         android:src="@drawable/telegram"
                         android:clickable="true"
                         android:focusable="true"
-                        android:background="?attr/selectableItemBackground"/>
+                        android:background="?attr/selectableItemBackground"
+                        android:contentDescription="@string/icon_telegram"/>
 
                     <ImageView
                         android:id="@+id/facebookGroupImage"
@@ -263,7 +272,8 @@
                         android:src="@drawable/facebook"
                         android:clickable="true"
                         android:focusable="true"
-                        android:background="?attr/selectableItemBackground"/>
+                        android:background="?attr/selectableItemBackground"
+                        android:contentDescription="@string/icon_facebook"/>
                 </GridLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -288,7 +298,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/asesoria"
-                    android:textSize="20sp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"/>
@@ -297,7 +307,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:baselineAligned="false">
 
                     <FrameLayout
                         android:id="@+id/advisoryButton"
@@ -312,7 +323,8 @@
                             android:layout_width="120dp"
                             android:layout_height="120dp"
                             android:src="@drawable/advisory"
-                            android:layout_gravity="center"/>
+                            android:layout_gravity="center"
+                            android:contentDescription="@string/icon_asesoria"/>
                     </FrameLayout>
 
                     <FrameLayout
@@ -328,7 +340,8 @@
                             android:layout_width="120dp"
                             android:layout_height="120dp"
                             android:src="@drawable/whatsapp"
-                            android:layout_gravity="center"/>
+                            android:layout_gravity="center"
+                            android:contentDescription="@string/icon_whatsapp"/>
                     </FrameLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -354,7 +367,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/donaciones"
-                    android:textSize="20sp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"/>
@@ -363,7 +376,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:baselineAligned="false">
 
                     <LinearLayout
                         android:id="@+id/yapeButton"
@@ -380,7 +394,8 @@
                             android:layout_width="120dp"
                             android:layout_height="120dp"
                             android:src="@drawable/yape"
-                            android:layout_gravity="center"/>
+                            android:layout_gravity="center"
+                            android:contentDescription="@string/icon_yape"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -398,7 +413,8 @@
                             android:layout_width="120dp"
                             android:layout_height="120dp"
                             android:src="@drawable/plin"
-                            android:layout_gravity="center"/>
+                            android:layout_gravity="center"
+                            android:contentDescription="@string/icon_plin"/>
                     </LinearLayout>
                 </LinearLayout>
 
@@ -412,7 +428,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="939824399"
+                        android:text="@string/cel"
                         android:textSize="18sp"
                         android:layout_marginEnd="8dp"/>
 
@@ -422,7 +438,8 @@
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_copy"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        android:padding="8dp"/>
+                        android:padding="8dp"
+                        android:contentDescription="@string/icon_copy"/>
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>

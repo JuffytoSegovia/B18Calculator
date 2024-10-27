@@ -161,6 +161,95 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- CardView de PAO -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/paoCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:layout_constraintTop_toBottomOf="@id/creditsCard"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/pao"
+                    android:contentDescription="@string/icon_pao"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pao"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/descripcion_pao"/>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- CardView de tutorial -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/tutorialCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:layout_constraintTop_toBottomOf="@id/paoCard"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/tutorial"
+                    android:contentDescription="@string/icon_tutorial" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tutorial_para_usar_la_app"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/descripcion_tutorial" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Imagen de Beca 18 -->
         <ImageView
             android:id="@+id/imageBeca18"
             android:layout_width="0dp"
@@ -168,22 +257,23 @@
             android:src="@drawable/beca18"
             android:adjustViewBounds="true"
             android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@id/creditsCard"
+            app:layout_constraintTop_toBottomOf="@id/tutorialCard"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:contentDescription="Logo de Beca 18"/>
+            android:contentDescription="@string/logo_de_beca_18" />
 
+        <!-- Botón de Postula a Beca 18 -->
         <Button
             android:id="@+id/buttonPostulaBeca18"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Postula a Beca 18 2025"
+            android:text="@string/cel"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             app:layout_constraintTop_toBottomOf="@id/imageBeca18"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

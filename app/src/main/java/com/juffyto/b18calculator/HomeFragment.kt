@@ -9,6 +9,7 @@ import androidx.cardview.widget.CardView
 import android.content.Intent
 import android.net.Uri
 import android.widget.Button
+import android.widget.Toast
 
 class HomeFragment : Fragment() {
 
@@ -31,7 +32,24 @@ class HomeFragment : Fragment() {
             openBeca18Website()
         }
 
+        view.findViewById<CardView>(R.id.paoCard).setOnClickListener {
+            openUrl("https://pao.pronabec.gob.pe/login")
+        }
+
+        view.findViewById<CardView>(R.id.tutorialCard).setOnClickListener {
+            openUrl("https://youtu.be/rlq-vBZal3Q?t=180")
+        }
+
         return view
+    }
+
+    private fun openUrl(url: String) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(context, "No se pudo abrir el enlace", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun openBeca18Website() {

@@ -143,7 +143,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/participaci_n_en_actividades_extracurriculares_m_ximo_10_puntos"
+                android:text="@string/actividades_extracurriculares"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"/>
@@ -152,30 +152,30 @@
                 android:id="@+id/checkboxConcursoNacional"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/ce_concurso_escolar_nacional_1_2_o_3_puesto_etapa_nacional_o_concurso_escolar_internacional_5_puntos"/>
+                android:text="@string/ce_concurso_escolar_nacional"/>
 
             <CheckBox
                 android:id="@+id/checkboxConcursoParticipacion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/cep_participaci_n_en_la_etapa_nacional_de_los_concursos_escolares_nacionales_2_puntos"/>
+                android:text="@string/cep_participacion_en_ce"/>
 
             <CheckBox
                 android:id="@+id/checkboxJuegosNacionales"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/jd_juegos_deportivos_escolares_1_2_o_3_puesto_en_etapa_nacional_5_puntos"/>
+                android:text="@string/jd_juegos_deportivos_escolares"/>
 
             <CheckBox
                 android:id="@+id/checkboxJuegosParticipacion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/jdp_participaci_n_en_la_etapa_nacional_de_los_juegos_deportivos_escolares_nacionales_2_puntos"/>
+                android:text="@string/jdp_participacion_en_jd"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/otras_condiciones_priorizables_m_ximo_25_puntos"
+                android:text="@string/otras_condiciones_priorizables"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"/>
@@ -184,55 +184,55 @@
                 android:id="@+id/checkboxDiscapacidad"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/d_discapacidad_5_puntos"/>
+                android:text="@string/d_discapacidad"/>
 
             <CheckBox
                 android:id="@+id/checkboxBomberos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/b_bomberos_activos_e_hijos_de_bomberos_5_puntos"/>
+                android:text="@string/b_bomberos"/>
 
             <CheckBox
                 android:id="@+id/checkboxVoluntarios"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/v_voluntarios_reconocidos_por_el_mimp_5_puntos"/>
+                android:text="@string/v_voluntarios"/>
 
             <CheckBox
                 android:id="@+id/checkboxComunidadNativa"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/ia_pertenencia_a_comunidad_nativa_amaz_nica_o_poblaci_n_afroperuana_5_puntos"/>
+                android:text="@string/ia_pertenencia_a_cna_pa_cc"/>
 
             <CheckBox
                 android:id="@+id/checkboxMetalesPesados"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/pem_poblaci_n_expuesta_a_metales_pesados_y_otras_sustancias_qu_micas_5_puntos"/>
+                android:text="@string/pem_poblacion_expuesta"/>
 
             <CheckBox
                 android:id="@+id/checkboxPoblacionBeneficiaria"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/pd_poblaci_n_beneficiaria_res_suprema_n_264_2022_jus_5_puntos"/>
+                android:text="@string/pd_poblacion_beneficiaria"/>
 
             <CheckBox
                 android:id="@+id/checkboxOrfandad"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/or_poblaci_n_beneficiaria_de_la_ley_n_31405_orfandad_5_puntos"/>
+                android:text="@string/or_orfandad"/>
 
             <CheckBox
                 android:id="@+id/checkboxDesproteccion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/df_desprotecci_n_familiar_5_puntos"/>
+                android:text="@string/df_desproteccion_familiar"/>
 
             <CheckBox
                 android:id="@+id/checkboxAgenteSalud"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/acs_agente_comunitario_de_salud_5_puntos"/>
+                android:text="@string/acs_agente_comunitario"/>
 
             <LinearLayout
                 android:id="@+id/layoutLenguaOriginaria"
@@ -253,7 +253,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="none"
-                        android:hint="@string/priorizaci_n_de_lengua_originaria"/>
+                        android:hint="@string/priorizacion_de_lo"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <ImageButton
@@ -261,7 +261,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_question"
-                    android:contentDescription="@string/informaci_n_sobre_lenguas_originarias"
+                    android:contentDescription="@string/info_sobre_lo"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:padding="8dp"/>
             </LinearLayout>
@@ -354,7 +354,7 @@
                     android:id="@+id/buttonSimulacroOnline"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/practicar_simulacro_en_l_nea"
+                    android:text="@string/practicar_simulacro_en_linea"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
             </LinearLayout>
 
