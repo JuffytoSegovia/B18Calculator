@@ -11,7 +11,7 @@ android {
         applicationId = "com.juffyto.b18calculator"
         minSdk = 26  // Cambiado a 26 para Android 8.0 Oreo
         targetSdk = 34  // Mantener en 34
-        versionCode = 1
+        versionCode = 2
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
