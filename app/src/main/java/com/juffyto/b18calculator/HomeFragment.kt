@@ -37,7 +37,7 @@ class HomeFragment : Fragment() {
         }
 
         view.findViewById<CardView>(R.id.tutorialCard).setOnClickListener {
-            openUrl("https://youtu.be/rlq-vBZal3Q?t=180")
+            openUrl("https://youtu.be/4vQg8IrO7BA")
         }
 
         return view
